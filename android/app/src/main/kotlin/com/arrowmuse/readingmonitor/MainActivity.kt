@@ -1,4 +1,4 @@
-package com.example.readingmonitor
+package com.arrowmuse.readingmonitor
 
 import io.flutter.embedding.android.FlutterActivity
 
