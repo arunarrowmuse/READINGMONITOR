@@ -448,7 +448,7 @@ class _VIewMachinesState extends State<VIewMachines>
                                                         Text(
                                                           (data[index]['dev'] ??
                                                                   0)
-                                                              .toString(),
+                                                              .toStringAsFixed(2),
                                                           style: TextStyle(
                                                               fontFamily:
                                                                   Constants
@@ -570,7 +570,7 @@ class _VIewMachinesState extends State<VIewMachines>
                                                         ),
                                                         Text(
                                                           data[index]['water']
-                                                              .toString(),
+                                                              .toStringAsFixed(2),
                                                           style: TextStyle(
                                                               fontFamily:
                                                                   Constants
@@ -606,8 +606,7 @@ class _VIewMachinesState extends State<VIewMachines>
                                                               fontSize: 12),
                                                         ),
                                                         Text(
-                                                          data[index]['batch']
-                                                              .toString(),
+                                                          data[index]['batch'].toStringAsFixed(2),
                                                           style: TextStyle(
                                                               fontFamily:
                                                                   Constants
@@ -644,7 +643,7 @@ class _VIewMachinesState extends State<VIewMachines>
                                                         ),
                                                         Text(
                                                           (data[index][
-                                                                      'waterbatch'] ??
+                                                                      'waterbatch'].toStringAsFixed(2) ??
                                                                   0)
                                                               .toString(),
                                                           style: TextStyle(

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 
 import 'constants.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: Constants.primaryColor,
         ).copyWith(secondary: Constants.primaryColor),
+        appBarTheme: AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.dark)
       ),
       home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
@@ -27,28 +29,6 @@ class MyApp extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
         MonthYearPickerLocalizations.delegate,
       ],
-    );
-  }
-}
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Splash Screen")),
-      body: Center(
-          child: Text("Welcome to Home Page",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 30,
-                  fontFamily: Constants.popins))),
     );
   }
 }
