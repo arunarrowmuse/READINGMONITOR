@@ -17,6 +17,7 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
     with AutomaticKeepAliveClientMixin<UploadSteamBoiler> {
   DateTime selectedDate = DateTime.now();
   TextEditingController bfw = TextEditingController();
+  TextEditingController ro_water = TextEditingController();
   TextEditingController coal1 = TextEditingController();
   TextEditingController coal2 = TextEditingController();
   TextEditingController bfwtemp = TextEditingController();
@@ -74,11 +75,13 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
 
       if (data.length == 0) {
         bfw.text = "";
+        ro_water.text = "";
         coal1.text = "";
         coal2.text = "";
         bfwtemp.text = "";
       } else {
         bfw.text = data[0]['bfw'].toString();
+        ro_water.text = data[0]['ro_water'].toString();
         coal1.text = data[0]['coal_1'].toString();
         coal2.text = data[0]['coal_2'].toString();
         bfwtemp.text = data[0]['bfw_temperature'].toString();
@@ -98,11 +101,15 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
 
   void AddUploadSteamList() async {
     String bfww = "0";
+    String ro_waterr = "0";
     String coalone = "0";
     String coaltwo = "0";
     String bfwtemperature = "0";
     if (bfw.text != "") {
       bfww = bfw.text;
+    }
+    if (ro_water.text != "") {
+      ro_waterr = ro_water.text;
     }
     if (coal1.text != "") {
       coalone = coal1.text;
@@ -122,6 +129,7 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
       body: jsonEncode(<String, String>{
         "date": selectedDate.toString().split(" ")[0],
         "bfw": bfww,
+        "ro_water": ro_waterr,
         "coal_1": coalone,
         "coal_2": coaltwo,
         "bfw_temperature": bfwtemperature
@@ -141,11 +149,15 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
 
   void UpdateUploadSteamList() async {
     String bfww = "0";
+    String ro_waterr = "0";
     String coalone = "0";
     String coaltwo = "0";
     String bfwtemperature = "0";
     if (bfw.text != "") {
       bfww = bfw.text;
+    }
+    if (ro_water.text != "") {
+      ro_waterr = ro_water.text;
     }
     if (coal1.text != "") {
       coalone = coal1.text;
@@ -169,6 +181,7 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
         "id": data[0]['id'].toString(),
         "date": selectedDate.toString().split(" ")[0],
         "bfw": bfww,
+        "ro_water": ro_waterr,
         "coal_1": coalone,
         "coal_2": coaltwo,
         "bfw_temperature": bfwtemperature
@@ -380,6 +393,67 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
                                     //   return null;
                                     // },
                                     controller: bfw,
+                                    style: TextStyle(
+                                      fontFamily: Constants.popins,
+                                      // color: Constants.textColor,
+                                    ),
+                                    decoration: InputDecoration(
+                                        contentPadding: const EdgeInsets.only(
+                                            bottom: 10.0, left: 10.0),
+                                        isDense: true,
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade300,
+                                              width: 1.0),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Constants.primaryColor,
+                                              width: 2.0),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                        filled: true,
+                                        hintStyle: TextStyle(
+                                          color: Colors.grey[400],
+                                          fontFamily: Constants.popins,
+                                        ),
+                                        // hintText: "first name",
+                                        fillColor: Colors.white70),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 15),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "RO Water",
+                                  style: TextStyle(
+                                      fontFamily: Constants.popins,
+                                      // color: Constants.textColor,
+                                      // fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                ),
+                                SizedBox(
+                                  height: 35,
+                                  width: w * 0.4,
+                                  child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    // validator: (value) {
+                                    //   if (value == null || value.isEmpty) {
+                                    //     return 'value is required.';
+                                    //   }
+                                    //   return null;
+                                    // },
+                                    controller: ro_water,
                                     style: TextStyle(
                                       fontFamily: Constants.popins,
                                       // color: Constants.textColor,

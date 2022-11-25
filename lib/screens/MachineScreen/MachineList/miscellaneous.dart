@@ -18,6 +18,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
   TextEditingController name = TextEditingController();
   TextEditingController unit = TextEditingController();
   TextEditingController deviation = TextEditingController();
+  TextEditingController mfem = TextEditingController();
   bool isLoad = false;
   var data;
   int lastindex = 0;
@@ -58,7 +59,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
   }
 
   void AddMiscMachineList(
-      String machine, String units, String deviation) async {
+      String machine, String units, String deviation, String mfem) async {
     final response = await http.post(
       Uri.parse('${Constants.weblink}MiscAdd'),
       headers: <String, String>{
@@ -69,6 +70,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
         "machine_name": machine.toString(),
         "unit": unit.text.toString(),
         "deviation": deviation.toString(),
+        "mfem" : mfem.toString(),
         // "machine_name": machine,
         // "unit": units.toString(),
         // "deviation": deviation.toString(),
@@ -92,7 +94,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
   }
 
   void UpdateMiscMachineList(
-      String machine, String units, String deviation, String id) async {
+      String machine, String units, String deviation, String id, String mfem) async {
     final response = await http.post(
       Uri.parse('${Constants.weblink}MiscUpdate/$id'),
       headers: <String, String>{
@@ -104,6 +106,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
         "machine_name": machine,
         "unit": units.toString(),
         "deviation": deviation.toString(),
+        "mfem" : mfem.toString(),
         // "id": id,
       }),
     );
@@ -171,6 +174,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
                           name.clear();
                           unit.clear();
                           deviation.clear();
+                          mfem.clear();
                           _addMachineDialog(context);
                         },
                         style: ButtonStyle(
@@ -270,6 +274,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
                                                           data[index]
                                                                   ['deviation']
                                                               .toString();
+                                                      mfem.text = data[index]['mfem'].toString();
                                                     });
                                                     _updateMachineDialog(
                                                         context,
@@ -339,6 +344,28 @@ class _MiscellaneousListState extends State<MiscellaneousList>
                                           ),
                                         ],
                                       ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        // crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Multiplying Factor",
+                                            style: TextStyle(
+                                                fontFamily: Constants.popins,
+                                                fontSize: 12),
+                                          ),
+                                          Text(
+                                            data[index]['mfem']
+                                                    .toString(),
+                                            style: TextStyle(
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                fontFamily: Constants.popins,
+                                                fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
                                       // Container(color: Colors.blue,width: w,height: 1,),
                                     ],
                                   ),
@@ -378,7 +405,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
                 return Form(
                   key: _key,
                   child: SizedBox(
-                    height: height / 5,
+                    height: height / 3.5,
                     width: 200,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -528,6 +555,55 @@ class _MiscellaneousListState extends State<MiscellaneousList>
                                 fillColor: Colors.white70),
                           ),
                         ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          height: 50,
+                          // width: w * 0.25,
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty)
+                                return 'Multiplying Factor is required.';
+                              return null;
+                            },
+                            controller: mfem,
+                            style: TextStyle(
+                              fontFamily: Constants.popins,
+                              // color: Constants.textColor,
+                            ),
+                            decoration: InputDecoration(
+                                labelText: "Multiplying Factor",
+                                hintText: "Multiplying Factor",
+                                contentPadding: const EdgeInsets.only(
+                                    bottom: 10.0, left: 10.0),
+                                isDense: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderSide: BorderSide(
+                                      color: Colors.grey.shade300, width: 1.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Constants.primaryColor,
+                                      width: 2.0),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14),
+                                labelStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14),
+                                // hintText: "first name",
+                                fillColor: Colors.white70),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -544,7 +620,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
                         _key.currentState!.save();
                         Navigator.pop(context);
                         AddMiscMachineList(
-                            name.text, unit.text, deviation.text);
+                            name.text, unit.text, deviation.text, mfem.text);
                       }
                     });
                   },
@@ -603,7 +679,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
                 return Form(
                   key: _key,
                   child: SizedBox(
-                    height: height / 5,
+                    height: height / 3.5,
                     width: 200,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -753,6 +829,55 @@ class _MiscellaneousListState extends State<MiscellaneousList>
                                 fillColor: Colors.white70),
                           ),
                         ),
+                        const SizedBox(height: 5),
+                        SizedBox(
+                          height: 50,
+                          // width: w * 0.25,
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty)
+                                return 'Multiplying Factor is required.';
+                              return null;
+                            },
+                            controller: mfem,
+                            style: TextStyle(
+                              fontFamily: Constants.popins,
+                              // color: Constants.textColor,
+                            ),
+                            decoration: InputDecoration(
+                                labelText: "Multiplying Factor",
+                                hintText: "Multiplying Factor",
+                                contentPadding: const EdgeInsets.only(
+                                    bottom: 10.0, left: 10.0),
+                                isDense: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderSide: BorderSide(
+                                      color: Colors.grey.shade300, width: 1.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Constants.primaryColor,
+                                      width: 2.0),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14),
+                                labelStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14),
+                                // hintText: "first name",
+                                fillColor: Colors.white70),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -769,7 +894,7 @@ class _MiscellaneousListState extends State<MiscellaneousList>
                         _key.currentState!.save();
                         Navigator.pop(context);
                         UpdateMiscMachineList(
-                            name.text, unit.text, deviation.text, id);
+                            name.text, unit.text, deviation.text, id, mfem.text);
                       }
                     });
                   },

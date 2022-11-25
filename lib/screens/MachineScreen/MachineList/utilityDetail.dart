@@ -23,6 +23,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
   TextEditingController name = TextEditingController();
   TextEditingController avg = TextEditingController();
   TextEditingController dev = TextEditingController();
+  TextEditingController mf = TextEditingController();
   bool isLoad = false;
   var data;
   List filterdata = [];
@@ -58,6 +59,8 @@ class _UtilityDetailState extends State<UtilityDetail> {
           filterdata.add(data[i]);
         }
       }
+      print("filterdata");
+      print(filterdata);
       setState(() {
         isLoad = false;
       });
@@ -80,7 +83,8 @@ class _UtilityDetailState extends State<UtilityDetail> {
         "uitility_categories_id": widget.id,
         "uilitysubc_name": name.text,
         "average": avg.text,
-        "deviation": dev.text
+        "deviation": dev.text,
+        "mf" : mf.text,
       }),
     );
     if (response.statusCode == 200) {
@@ -89,6 +93,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
       name.clear();
       avg.clear();
       dev.clear();
+      mf.clear();
       FetchSubMachineList();
     } else {
       Constants.showtoast("Error Fetching Data.");
@@ -107,6 +112,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
         "uilitysubc_name": name.text,
         "average": avg.text,
         "deviation": dev.text,
+        "mf" : mf.text,
         // "uitility_categories_id": id,
       }),
     );
@@ -116,6 +122,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
       name.clear();
       avg.clear();
       dev.clear();
+      mf.clear();
       FetchSubMachineList();
     } else {
       Constants.showtoast("Error Updating Data.");
@@ -282,6 +289,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                               name.clear();
                               avg.clear();
                               dev.clear();
+                              mf.clear();
                               _displayTextInputDialog(context);
                             },
                             style: ButtonStyle(
@@ -385,6 +393,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                                                   dev.text = filterdata[index]
                                                           ['deviation']
                                                       .toString();
+                                                  mf.text = filterdata[index]['mf'].toString();
                                                   updateData(
                                                       context,
                                                       filterdata[index]['id']
@@ -452,6 +461,28 @@ class _UtilityDetailState extends State<UtilityDetail> {
                                         ),
                                       ],
                                     ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      // crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Multiplying Factor",
+                                          style: TextStyle(
+                                              fontFamily: Constants.popins,
+                                              fontSize: 12),
+                                        ),
+                                        Text(
+                                          filterdata[index]['mf']
+                                              .toString(),
+                                          style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontFamily: Constants.popins,
+                                              fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
                                     // Container(color: Colors.blue,width: w,height: 1,),
                                   ],
                                 ),
@@ -489,7 +520,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                 return Form(
                   key: _key,
                   child: SizedBox(
-                    height: height / 4.5,
+                    height: height / 3.5,
                     width: 200,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -637,6 +668,52 @@ class _UtilityDetailState extends State<UtilityDetail> {
                                 fillColor: Colors.white70),
                           ),
                         ),
+                        SizedBox(
+                          height: 60,
+                          child: TextFormField(
+                            controller: mf,
+                              keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty)
+                                return 'Unit is required.';
+                              return null;
+                            },
+                            style: TextStyle(
+                              fontFamily: Constants.popins,
+                            ),
+                            decoration: InputDecoration(
+                                labelText: "Multiplying Factor",
+                                hintText: "Multiplying Factor",
+                                contentPadding: const EdgeInsets.only(
+                                    bottom: 10.0, left: 10.0),
+                                isDense: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderSide: BorderSide(
+                                      color: Colors.grey.shade300, width: 1.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Constants.primaryColor,
+                                      width: 2.0),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14),
+                                labelStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14),
+                                // hintText: "first name",
+                                fillColor: Colors.white70),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -712,7 +789,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                 return Form(
                   key: _key,
                   child: SizedBox(
-                    height: height / 4.5,
+                    height: height / 3.5,
                     width: 200,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -830,6 +907,52 @@ class _UtilityDetailState extends State<UtilityDetail> {
                             decoration: InputDecoration(
                                 labelText: "Deviation Allowed",
                                 hintText: "Deviation Allowed",
+                                contentPadding: const EdgeInsets.only(
+                                    bottom: 10.0, left: 10.0),
+                                isDense: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderSide: BorderSide(
+                                      color: Colors.grey.shade300, width: 1.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Constants.primaryColor,
+                                      width: 2.0),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                filled: true,
+                                hintStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14),
+                                labelStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14),
+                                // hintText: "first name",
+                                fillColor: Colors.white70),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 60,
+                          child: TextFormField(
+                            controller: mf,
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty)
+                                return 'Unit is required.';
+                              return null;
+                            },
+                            style: TextStyle(
+                              fontFamily: Constants.popins,
+                            ),
+                            decoration: InputDecoration(
+                                labelText: "Multiplying Factor",
+                                hintText: "Multiplying Factor",
                                 contentPadding: const EdgeInsets.only(
                                     bottom: 10.0, left: 10.0),
                                 isDense: true,

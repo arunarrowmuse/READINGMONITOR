@@ -21,6 +21,8 @@ class MachineDetail extends StatefulWidget {
 
 class _MachineDetailState extends State<MachineDetail> {
   TextEditingController name = TextEditingController();
+  TextEditingController mfem = TextEditingController();
+  TextEditingController mfwater = TextEditingController();
   TextEditingController emhm = TextEditingController();
   TextEditingController emhmdev = TextEditingController();
   TextEditingController waterbatch = TextEditingController();
@@ -90,7 +92,9 @@ class _MachineDetailState extends State<MachineDetail> {
         "em_hm": emhm.text,
         "em_hm_percentage": emhmdev.text,
         "water_batch": waterbatch.text,
-        "temp_percentage": temperaturedev.text
+        "temp_percentage": temperaturedev.text,
+        "mfem" : mfem.text,
+        "mf_water" : mfwater.text,
       }),
     );
     if (response.statusCode == 200) {
@@ -101,6 +105,8 @@ class _MachineDetailState extends State<MachineDetail> {
       emhmdev.clear();
       waterbatch.clear();
       temperaturedev.clear();
+      mfem.clear();
+      mfwater.clear();
       FetchSubMachineList();
     } else {
       print(response.statusCode);
@@ -123,6 +129,8 @@ class _MachineDetailState extends State<MachineDetail> {
         "em_hm_percentage": emhmdev.text,
         "water_batch": waterbatch.text,
         "temp_percentage": temperaturedev.text,
+        "mfem" : mfem.text,
+        "mf_water" : mfwater.text
       }),
     );
     if (response.statusCode == 200) {
@@ -133,6 +141,8 @@ class _MachineDetailState extends State<MachineDetail> {
       emhmdev.clear();
       waterbatch.clear();
       temperaturedev.clear();
+      mfem.clear();
+      mfwater.clear();
       FetchSubMachineList();
     } else {
       print(response.statusCode);
@@ -308,6 +318,8 @@ class _MachineDetailState extends State<MachineDetail> {
                               emhmdev.clear();
                               waterbatch.clear();
                               temperaturedev.clear();
+                              mfem.clear();
+                              mfwater.clear();
                               _displayTextInputDialog(context);
                             },
                             style: ButtonStyle(
@@ -421,6 +433,8 @@ class _MachineDetailState extends State<MachineDetail> {
                                                       .text = filterdata[index]
                                                           ['temp_percentage']
                                                       .toString();
+                                                  mfem.text = filterdata[index]['mfem'].toString();
+                                                  mfwater.text = filterdata[index]['mf_water'].toString();
                                                   updateData(
                                                       context,
                                                       filterdata[index]['id']
@@ -485,35 +499,67 @@ class _MachineDetailState extends State<MachineDetail> {
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                                   children: [
                                                     Text(
-                                                      "Water/Batch",
+                                                      "EM/HM %",
                                                       style: TextStyle(
                                                           fontFamily:
-                                                              Constants.popins,
+                                                          Constants.popins,
                                                           // color: Constants.textColor,
                                                           fontWeight:
-                                                              FontWeight.w600,
+                                                          FontWeight.w600,
                                                           fontSize: 12),
                                                     ),
                                                     Text(
-                                                      filterdata[index]
-                                                              ['water_batch']
+                                                      filterdata[index][
+                                                      'em_hm_percentage']
                                                           .toString(),
                                                       style: TextStyle(
                                                           fontFamily:
-                                                              Constants.popins,
+                                                          Constants.popins,
                                                           decoration:
-                                                              TextDecoration
-                                                                  .underline,
+                                                          TextDecoration
+                                                              .underline,
                                                           // color: Constants.textColor,
                                                           // fontWeight: FontWeight.w600,
                                                           fontSize: 12),
                                                     ),
                                                   ],
                                                 ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "EM MF",
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                          Constants.popins,
+                                                          // color: Constants.textColor,
+                                                          fontWeight:
+                                                          FontWeight.w600,
+                                                          fontSize: 12),
+                                                    ),
+                                                    Text(
+                                                      filterdata[index][
+                                                      'mfem']
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                          Constants.popins,
+                                                          decoration:
+                                                          TextDecoration
+                                                              .underline,
+                                                          // color: Constants.textColor,
+                                                          // fontWeight: FontWeight.w600,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ],
+                                                ),
+
                                               ],
                                             )),
                                         Container(
@@ -528,29 +574,29 @@ class _MachineDetailState extends State<MachineDetail> {
                                               children: [
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                                   children: [
                                                     Text(
-                                                      "EM/HM %",
+                                                      "Water/Batch",
                                                       style: TextStyle(
                                                           fontFamily:
-                                                              Constants.popins,
+                                                          Constants.popins,
                                                           // color: Constants.textColor,
                                                           fontWeight:
-                                                              FontWeight.w600,
+                                                          FontWeight.w600,
                                                           fontSize: 12),
                                                     ),
                                                     Text(
-                                                      filterdata[index][
-                                                              'em_hm_percentage']
+                                                      filterdata[index]
+                                                      ['water_batch']
                                                           .toString(),
                                                       style: TextStyle(
                                                           fontFamily:
-                                                              Constants.popins,
+                                                          Constants.popins,
                                                           decoration:
-                                                              TextDecoration
-                                                                  .underline,
+                                                          TextDecoration
+                                                              .underline,
                                                           // color: Constants.textColor,
                                                           // fontWeight: FontWeight.w600,
                                                           fontSize: 12),
@@ -588,6 +634,38 @@ class _MachineDetailState extends State<MachineDetail> {
                                                     ),
                                                   ],
                                                 ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Water MF",
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              Constants.popins,
+                                                          // color: Constants.textColor,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 12),
+                                                    ),
+                                                    Text(
+                                                      filterdata[index][
+                                                              'mf_water']
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              Constants.popins,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          // color: Constants.textColor,
+                                                          // fontWeight: FontWeight.w600,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ],
+                                                ),
+
                                               ],
                                             )),
                                       ],
@@ -629,7 +707,7 @@ class _MachineDetailState extends State<MachineDetail> {
                 return Form(
                   key: _key,
                   child: SizedBox(
-                    height: height / 4,
+                    height: height / 3,
                     width: 200,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -786,7 +864,7 @@ class _MachineDetailState extends State<MachineDetail> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        // SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -857,6 +935,109 @@ class _MachineDetailState extends State<MachineDetail> {
                                 decoration: InputDecoration(
                                     labelText: "Water/Batch % ",
                                     hintText: "Water/Batch % ",
+                                    contentPadding: const EdgeInsets.only(
+                                        bottom: 10.0, left: 10.0),
+                                    isDense: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.grey.shade300,
+                                          width: 1.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Constants.primaryColor,
+                                          width: 2.0),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    filled: true,
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14),
+                                    labelStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14),
+                                    // hintText: "first name",
+                                    fillColor: Colors.white70),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              height: 60,
+                              width: w * 0.25,
+                              child: TextFormField(
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty)
+                                    return 'Value is required.';
+                                  return null;
+                                },
+                                controller: mfem,
+                                style: TextStyle(
+                                  fontFamily: Constants.popins,
+                                  // color: Constants.textColor,
+                                ),
+                                decoration: InputDecoration(
+                                    labelText: "EM MF",
+                                    hintText: "EM MF",
+                                    contentPadding: const EdgeInsets.only(
+                                        bottom: 10.0, left: 10.0),
+                                    isDense: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.grey.shade300,
+                                          width: 1.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Constants.primaryColor,
+                                          width: 2.0),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    filled: true,
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14),
+                                    labelStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14),
+                                    // hintText: "first name",
+                                    fillColor: Colors.white70),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 60,
+                              width: w * 0.25,
+                              child: TextFormField(
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty)
+                                    return 'Value % is required.';
+                                  return null;
+                                },
+                                controller: mfwater,
+                                style: TextStyle(
+                                  fontFamily: Constants.popins,
+                                  // color: Constants.textColor,
+                                ),
+                                decoration: InputDecoration(
+                                    labelText: "Water MF",
+                                    hintText: "Water MF",
                                     contentPadding: const EdgeInsets.only(
                                         bottom: 10.0, left: 10.0),
                                     isDense: true,
@@ -965,7 +1146,7 @@ class _MachineDetailState extends State<MachineDetail> {
                 return Form(
                   key: _key,
                   child: SizedBox(
-                    height: height / 4,
+                    height: height / 3,
                     width: 200,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1192,6 +1373,109 @@ class _MachineDetailState extends State<MachineDetail> {
                                 decoration: InputDecoration(
                                     labelText: "Water/Batch % ",
                                     hintText: "Water/Batch % ",
+                                    contentPadding: const EdgeInsets.only(
+                                        bottom: 10.0, left: 10.0),
+                                    isDense: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.grey.shade300,
+                                          width: 1.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Constants.primaryColor,
+                                          width: 2.0),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    filled: true,
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14),
+                                    labelStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14),
+                                    // hintText: "first name",
+                                    fillColor: Colors.white70),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              height: 60,
+                              width: w * 0.25,
+                              child: TextFormField(
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty)
+                                    return 'Value is required.';
+                                  return null;
+                                },
+                                controller: mfem,
+                                style: TextStyle(
+                                  fontFamily: Constants.popins,
+                                  // color: Constants.textColor,
+                                ),
+                                decoration: InputDecoration(
+                                    labelText: "EM MF",
+                                    hintText: "EM MF",
+                                    contentPadding: const EdgeInsets.only(
+                                        bottom: 10.0, left: 10.0),
+                                    isDense: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.grey.shade300,
+                                          width: 1.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Constants.primaryColor,
+                                          width: 2.0),
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    filled: true,
+                                    hintStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14),
+                                    labelStyle: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14),
+                                    // hintText: "first name",
+                                    fillColor: Colors.white70),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 60,
+                              width: w * 0.25,
+                              child: TextFormField(
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty)
+                                    return 'Value % is required.';
+                                  return null;
+                                },
+                                controller: mfwater,
+                                style: TextStyle(
+                                  fontFamily: Constants.popins,
+                                  // color: Constants.textColor,
+                                ),
+                                decoration: InputDecoration(
+                                    labelText: "Water MF",
+                                    hintText: "Water MF",
                                     contentPadding: const EdgeInsets.only(
                                         bottom: 10.0, left: 10.0),
                                     isDense: true,

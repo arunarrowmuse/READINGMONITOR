@@ -61,7 +61,7 @@ class _ViewSteamBoilerState extends State<ViewSteamBoiler>
       print("View data------------------------------");
       print(response.body);
       data = jsonDecode(response.body);
-      print(data);
+      // print(data);
       setState(() {
         isLoad = false;
       });
@@ -231,7 +231,67 @@ class _ViewSteamBoilerState extends State<ViewSteamBoiler>
                                   borderRadius: const BorderRadius.all(
                                       Radius.circular(8))),
                               child: Center(
-                                child: Text(data[0]['bfw'].toString(),
+                                child: Text(data[0]['New'].toString(),
+                                    style: TextStyle(
+                                      // color: Colors.grey,
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(" RO Water :",
+                                style: TextStyle(
+                                  // color: Colors.grey,
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14)),
+                            const SizedBox(height: 5),
+                            Container(
+                              height: 40,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8))),
+                              child: Center(
+                                child: Text(
+                                    data[0]['ro_water'].toString(),
+                                    style: TextStyle(
+                                      // color: Colors.grey,
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(" Condensate :",
+                                style: TextStyle(
+                                  // color: Colors.grey,
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14)),
+                            const SizedBox(height: 5),
+                            Container(
+                              height: 40,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8))),
+                              child: Center(
+                                child: Text(
+                                    data[0]['condensate'].toString(),
                                     style: TextStyle(
                                       // color: Colors.grey,
                                         fontFamily: Constants.popins,
@@ -408,6 +468,85 @@ class _ViewSteamBoilerState extends State<ViewSteamBoiler>
                                     style: TextStyle(
                                         color: Colors.red,
                                         fontWeight: FontWeight.w600,
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(" RO Water % :",
+                                style: TextStyle(
+                                  // color: Colors.grey,
+                                    fontFamily: Constants.popins,
+                                    // fontWeight: FontWeight.bold,
+                                    fontSize: 14)),
+                            const SizedBox(height: 5),
+                            Container(
+                              height: 40,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8))),
+                              child: Center(
+                                child: (num.parse(
+                                    (data[0]["or_water_per"] ?? 0).toString()) <
+                                    num.parse(data[0][
+                                    "ro_waterstandard"]) &&
+                                    num.parse(
+                                        (data[0]["or_water_per"] ?? 0).toString()) >
+                                        num.parse(data[0][
+                                        "ro_waterstandard"]) *
+                                            -1)
+                                    ? Text(num.parse(
+                                    (data[0]['or_water_per'] ?? 0).toString())
+                                    .toStringAsFixed(2) + " %",
+                                    style: TextStyle(
+                                      // color: Colors.grey,
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14)) : Text(num.parse(
+                                    (data[0]['or_water_per'] ?? 0).toString())
+                                    .toStringAsFixed(2) + " %",
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontFamily: Constants.popins,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),     /// todo ro water percentage and cosmetic
+                        const SizedBox(height: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Condensate Recovery :",
+                                style: TextStyle(
+                                  // color: Colors.grey,
+                                    fontFamily: Constants.popins,
+                                    // fontWeight: FontWeight.bold,
+                                    fontSize: 12)),
+                            const SizedBox(height: 5),
+                            Container(
+                              height: 40,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8))),
+                              child: Center(
+                                child: Text(
+                                    data[0]['condensateRecovery'].toString(),
+                                    style: TextStyle(
+                                      // color: Colors.grey,
                                         fontFamily: Constants.popins,
                                         fontSize: 14)),
                               ),

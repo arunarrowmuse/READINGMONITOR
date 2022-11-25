@@ -17,6 +17,8 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
   TextEditingController temp = TextEditingController();
   TextEditingController bfwpr = TextEditingController();
   TextEditingController bfwtemppr = TextEditingController();
+  TextEditingController ro_water = TextEditingController();
+  TextEditingController ro_water_per = TextEditingController();
   TextEditingController coal1 = TextEditingController();
   TextEditingController coal1dv = TextEditingController();
   TextEditingController ratecoal1 = TextEditingController();
@@ -52,6 +54,8 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
         "temperature": temp.text,
         "bfw_percentage": bfwpr.text,
         "bfw_temperature_percentage": bfwtemppr.text,
+        "ro_water": ro_water.text,
+        "ro_water_per":ro_water_per.text,
         "coal_1": coal1.text,
         "coal_deviation_1": coal1dv.text,
         "rate_of_coal_1": ratecoal1.text,
@@ -88,6 +92,8 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
         "temperature": temp.text,
         "bfw_percentage": bfwpr.text,
         "bfw_temperature_percentage": bfwtemppr.text,
+        "ro_water": ro_water.text,
+        "ro_water_per":ro_water_per.text,
         "coal_1": coal1.text,
         "coal_deviation_1": coal1dv.text,
         "rate_of_coal_1": ratecoal1.text,
@@ -133,6 +139,8 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
         temp.text = "";
         bfwpr.text = "";
         bfwtemppr.text = "";
+        ro_water.text = "";
+        ro_water_per.text = "";
         coal1.text = "";
         coal1dv.text = "";
         ratecoal1.text = "";
@@ -146,6 +154,8 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
         temp.text = data[0]['temperature'].toString();
         bfwpr.text = data[0]['bfw_percentage'].toString();
         bfwtemppr.text = data[0]['bfw_temperature_percentage'].toString();
+        ro_water.text = data[0]['ro_water'].toString();
+        ro_water_per.text = data[0]['ro_water_per'].toString();
         coal1.text = data[0]['coal_1'].toString();
         coal1dv.text = data[0]['coal_deviation_1'].toString();
         ratecoal1.text = data[0]['rate_of_coal_1'].toString();
@@ -373,6 +383,114 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                           child: TextFormField(
                                     keyboardType: TextInputType.number,
                               controller: bfwtemppr,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) return '';
+                                return null;
+                              },
+                              style: TextStyle(
+                                fontFamily: Constants.popins,
+                                // color: Constants.textColor,
+                              ),
+                              decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.only(
+                                      bottom: 10.0, left: 10.0),
+                                  isDense: true,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                        color: Colors.grey.shade300, width: 1.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Constants.primaryColor,
+                                        width: 2.0),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  filled: true,
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                  ),
+                                  // hintText: "first name",
+                                  fillColor: Colors.white70),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "RO Water",
+                            style: TextStyle(
+                                fontFamily: Constants.popins,
+                                // color: Constants.textColor,
+                                // fontWeight: FontWeight.w600,
+                                fontSize: 16),
+                          ),
+                          SizedBox(
+                            height: 50,
+                            width: w * 0.4,
+                          child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                              controller: ro_water,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) return '';
+                                return null;
+                              },
+                              style: TextStyle(
+                                fontFamily: Constants.popins,
+                                // color: Constants.textColor,
+                              ),
+                              decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.only(
+                                      bottom: 10.0, left: 10.0),
+                                  isDense: true,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                        color: Colors.grey.shade300, width: 1.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Constants.primaryColor,
+                                        width: 2.0),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  filled: true,
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey[400],
+                                    fontFamily: Constants.popins,
+                                  ),
+                                  // hintText: "first name",
+                                  fillColor: Colors.white70),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "RO Water %",
+                            style: TextStyle(
+                                fontFamily: Constants.popins,
+                                // color: Constants.textColor,
+                                // fontWeight: FontWeight.w600,
+                                fontSize: 16),
+                          ),
+                          SizedBox(
+                            height: 50,
+                            width: w * 0.4,
+                          child: TextFormField(
+                                    keyboardType: TextInputType.number,
+                              controller: ro_water_per,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
                                 return null;

@@ -347,8 +347,8 @@ class _ViewUtilityState extends State<ViewUtility>
                                                                 fontSize: 12),
                                                           ),
                                                           Text(
-                                                            num.parse(data[index]
-                                                                        ["em"]
+                                                            num.parse((data[index]
+                                                                        ["mf"] ?? 0)
                                                                     .toString())
                                                                 .toStringAsFixed(
                                                                     2),
@@ -622,7 +622,7 @@ class _ViewUtilityState extends State<ViewUtility>
                                                                                 fontSize: 12),
                                                                           ),
                                                                           Text(
-                                                                            sdata[sindex]["em"].toString(),
+                                                                            (sdata[sindex]["mfem"]??0).toString(),
                                                                             style: TextStyle(
                                                                                 fontFamily: Constants.popins,
                                                                                 decoration: TextDecoration.underline,

@@ -367,7 +367,7 @@ class _VIewMachinesState extends State<VIewMachines>
                                                         ),
                                                         Text(
                                                           num.parse(data[index]
-                                                                      ['em']
+                                                                      ['mfmem']    /// todo
                                                                   .toString())
                                                               .toStringAsFixed(
                                                                   2),
@@ -569,7 +569,7 @@ class _VIewMachinesState extends State<VIewMachines>
                                                               fontSize: 12),
                                                         ),
                                                         Text(
-                                                          data[index]['water']
+                                                          data[index]['mf_water']
                                                               .toStringAsFixed(2),
                                                           style: TextStyle(
                                                               fontFamily:
@@ -831,7 +831,7 @@ class _VIewMachinesState extends State<VIewMachines>
                                                                                   fontSize: 12),
                                                                             ),
                                                                             Text(
-                                                                              sdata[sindex]['em'].toString(),
+                                                                              sdata[sindex]['mfem'].toString(),
                                                                               style: TextStyle(
                                                                                   fontFamily: Constants.popins,
                                                                                   decoration: TextDecoration.underline,

@@ -278,7 +278,7 @@ class _ViewMiscState extends State<ViewMisc>
                                             ),
                                             SizedBox(width: 30),
                                             Text(
-                                             ( data[index]['unit']??0).toString(),
+                                             ( data[index]['mfunit']??0).toString(),
                                               style: TextStyle(
                                                   decoration:
                                                       TextDecoration.underline,
