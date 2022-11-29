@@ -304,7 +304,7 @@ class _ViewGEBState extends State<ViewGEB>
                                                   fontSize: 12),
                                             ),
                                             Text(
-                                              (data[index]['kwh']??0)
+                                              (data[index]['kwhtotal']??0)
                                                   .toStringAsFixed(2),
                                               style: TextStyle(
                                                   fontFamily:

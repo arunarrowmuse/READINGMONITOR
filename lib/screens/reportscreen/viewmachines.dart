@@ -951,7 +951,7 @@ class _VIewMachinesState extends State<VIewMachines>
                                                                                   fontSize: 12),
                                                                             ),
                                                                             Text(
-                                                                              sdata[sindex]['water'].toString(),
+                                                                              sdata[sindex]['mfwater'].toString(),
                                                                               style: TextStyle(
                                                                                   fontFamily: Constants.popins,
                                                                                   decoration: TextDecoration.underline,

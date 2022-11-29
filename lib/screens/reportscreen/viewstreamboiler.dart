@@ -787,6 +787,64 @@ class _ViewSteamBoilerState extends State<ViewSteamBoiler>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text(" RO Water :",
+                                style: TextStyle(
+                                  // color: Colors.grey,
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14)),
+                            const SizedBox(height: 5),
+                            Container(
+                              height: 40,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8))),
+                              child: Center(
+                                child: Text("0",
+                                    style: TextStyle(
+                                      // color: Colors.grey,
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(" Condensate :",
+                                style: TextStyle(
+                                  // color: Colors.grey,
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14)),
+                            const SizedBox(height: 5),
+                            Container(
+                              height: 40,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8))),
+                              child: Center(
+                                child: Text("0",
+                                    style: TextStyle(
+                                      // color: Colors.grey,
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(" BFW Temperature :",
                                 style: TextStyle(
                                   // color: Colors.grey,
@@ -916,6 +974,67 @@ class _ViewSteamBoilerState extends State<ViewSteamBoiler>
                                     fontFamily: Constants.popins,
                                     // fontWeight: FontWeight.bold,
                                     fontSize: 14)),
+                            const SizedBox(height: 5),
+                            Container(
+                              height: 40,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8))),
+                              child: Center(
+                                child: Text("0.00",
+                                    style: TextStyle(
+                                      // color: Colors.grey,
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(" RO Water % :",
+                                style: TextStyle(
+                                  // color: Colors.grey,
+                                    fontFamily: Constants.popins,
+                                    // fontWeight: FontWeight.bold,
+                                    fontSize: 14)),
+                            const SizedBox(height: 5),
+                            Container(
+                              height: 40,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8))),
+                              child: Center(
+                                child: Text("0.00",
+                                    style: TextStyle(
+                                      // color: Colors.grey,
+                                        fontFamily: Constants.popins,
+                                        fontSize: 14)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(" Condensate Recovery :",
+                                style: TextStyle(
+                                  // color: Colors.grey,
+                                    fontFamily: Constants.popins,
+                                    // fontWeight: FontWeight.bold,
+                                    fontSize: 12)),
                             const SizedBox(height: 5),
                             Container(
                               height: 40,
