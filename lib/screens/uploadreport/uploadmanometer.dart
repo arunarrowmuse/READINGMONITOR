@@ -1290,8 +1290,6 @@ class _UploadManoThermoState extends State<UploadManoThermo>
           'Authorization': 'Bearer $tokenvalue',
         },
         body: jsonEncode(<String, String>{
-          // "date": selectedDate.toString().split(" ")[0],
-          // "machine_id": listdata[i]["id"].toString(),
           "id_fan": idf,
           "fd_fan": fd,
           "coal_used": coal,
