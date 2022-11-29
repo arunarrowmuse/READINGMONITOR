@@ -205,6 +205,75 @@ class _UploadSupplyPumpState extends State<UploadSupplyPump>
     FetchSupplyList();
   }
 
+  void AddUpdateSupplyList() async {
+    Utils(context).startLoading();
+    for (int i = 0; i < IDControllers.length; i++) {
+      if (IDControllers[i].text.toString() == "0") {
+        if (FlowControllers[i].text != "" || UnitControllers[i].text != ""){
+          print('added');
+          String flow = "0";
+          String unit = "0";
+          if (FlowControllers[i].text != "") {
+            flow = FlowControllers[i].text;
+          }
+          if (UnitControllers[i].text != "") {
+            unit = UnitControllers[i].text;
+          }
+          final response = await http.post(
+            Uri.parse('${Constants.weblink}GetSupplyPumpReportUploadAdd'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'Authorization': 'Bearer $tokenvalue',
+            },
+            body: jsonEncode(<String, String>{
+              "date": selectedDate.toString().split(" ")[0],
+              "supplyp_name_id": listdata[i]["id"].toString(),
+              "flow": flow,
+              "unit": unit
+            }),
+          );
+          if (response.statusCode == 200) {
+            // Utils(context).stopLoading();
+          } else {
+            // Utils(context).stopLoading();
+            Constants.showtoast("Error Updating Data.");
+          }
+        } else{
+          print('skipped');
+        }
+      } else {
+        print('update');
+        String flow = "0";
+        String unit = "0";
+        if (FlowControllers[i].text != "") {
+          flow = FlowControllers[i].text;
+        }
+        if (UnitControllers[i].text != "") {
+          unit = UnitControllers[i].text;
+        }
+        final response = await http.put(
+          Uri.parse('${Constants.weblink}SupplyPumpReportUploadUpdated/${IDControllers[i].text}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $tokenvalue',
+          },
+          body: jsonEncode(<String, String>{"flow": flow, "unit": unit}),
+        );
+        if (response.statusCode == 200) {
+          // Constants.showtoast("Report Updated!");
+        } else {
+          print(response.statusCode);
+          print(response.body);
+
+          Constants.showtoast("Error Updating Data.");
+        }
+      }
+    }
+    Constants.showtoast("All Report Updated!");
+    Utils(context).stopLoading();
+    FetchSupplyList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
@@ -265,6 +334,33 @@ class _UploadSupplyPumpState extends State<UploadSupplyPump>
                             )),
                         // Icon(Icons.l, color: Colors.white,),
                       ],
+                    ),
+                    Container(
+                      height: 30,
+                      padding: const EdgeInsets.only(right: 15.0),
+                      // width: 100,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          AddUpdateSupplyList();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Constants.primaryColor)),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(" Sumbit All    ",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14)),
+                            Image.asset(
+                              "assets/icons/Edit.png",
+                              height: 16,
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

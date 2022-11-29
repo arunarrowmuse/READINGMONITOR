@@ -25,8 +25,17 @@ class _UploadGEBState extends State<UploadGEB>
   TextEditingController kvah = TextEditingController();
   TextEditingController md = TextEditingController();
   TextEditingController turbine = TextEditingController();
+  List<TextEditingController> KWHControllers = [];
+  List<TextEditingController> KVARHControllers = [];
+  List<TextEditingController> KVAHControllers = [];
+  List<TextEditingController> MDControllers = [];
+  List<TextEditingController> TURBINEControllers = [];
+  List<TextEditingController> IDControllers = [];
+  List<TextEditingController> GEBIDControllers = [];
   late SharedPreferences prefs;
   String? tokenvalue;
+  var listdata;
+  var uploaddata;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -38,7 +47,7 @@ class _UploadGEBState extends State<UploadGEB>
       setState(() {
         selectedDate = picked;
         print(selectedDate.toString().split(" ")[0]);
-        FetchUploadGEBList();
+        FetchGEBList();
       });
     }
   }
@@ -46,11 +55,19 @@ class _UploadGEBState extends State<UploadGEB>
   @override
   void initState() {
     super.initState();
-    FetchUploadGEBList();
-    FetchGEBMachineList();
+    FetchGEBList();
+    // FetchUploadGEBList();
+    // FetchGEBMachineList();
   }
 
-  void FetchUploadGEBList() async {
+  void FetchGEBList() async {
+    KWHControllers.clear();
+    KVARHControllers.clear();
+    KVAHControllers.clear();
+    MDControllers.clear();
+    TURBINEControllers.clear();
+    IDControllers.clear();
+    GEBIDControllers.clear();
     setState(() {
       isLoad = true;
     });
@@ -58,62 +75,114 @@ class _UploadGEBState extends State<UploadGEB>
     tokenvalue = prefs.getString("token");
     final response = await http.get(
       Uri.parse(
-          '${Constants.weblink}UploadReportGebSharch/${selectedDate.toString().split(" ")[0]}'),
+          '${Constants.weblink}GetGebListing'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $tokenvalue',
       },
     );
-
     if (response.statusCode == 200) {
-      data = jsonDecode(response.body);
-      print(data);
-      if (data.length == 0) {
-        kwh.text = "";
-        kvarh.text = "";
-        kvah.text = "";
-        md.text = "";
-        turbine.text = "";
+      listdata = jsonDecode(response.body);
+      print("machine list");
+      print(listdata.length);
+      print(listdata);
+      final responses = await http.get(
+        Uri.parse(
+            '${Constants.weblink}UploadReportGebSharch/${selectedDate.toString().split(" ")[0]}'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $tokenvalue',
+        },
+      );
+      if (responses.statusCode == 200) {
+        uploaddata = jsonDecode(responses.body);
+        print(" upload data");
+        print(uploaddata.length);
+        print(uploaddata);
+        if (uploaddata.length == 0) {
+          for (int i = 0; i < listdata.length; i++) {
+            var kwhController = TextEditingController(text: "");
+            var kvarhController = TextEditingController(text: "");
+            var kvahController = TextEditingController(text: "");
+            var mdController = TextEditingController(text: "");
+            var turbineController = TextEditingController(text: "");
+            var idController = TextEditingController(text: "0");
+            var gebidController = TextEditingController(text: "0");
+            KWHControllers.add(kwhController);
+            KVARHControllers.add(kvarhController);
+            KVAHControllers.add(kvahController);
+            MDControllers.add(mdController);
+            TURBINEControllers.add(turbineController);
+            IDControllers.add(idController);
+            GEBIDControllers.add(gebidController);
+          }
+        } else {
+          for (int i = 0; i < listdata.length; i++) {
+            var kwhController = TextEditingController(text: "");
+            var kvarhController = TextEditingController(text: "");
+            var kvahController = TextEditingController(text: "");
+            var mdController = TextEditingController(text: "");
+            var turbineController = TextEditingController(text: "");
+            var idController = TextEditingController(text: "0");
+            var gebidController = TextEditingController(text: "0");
+            for (int j = 0; j < uploaddata.length; j++) {
+              if (listdata[i]['id'] == uploaddata[j]['GebID']) {
+
+                idController = TextEditingController(text: uploaddata[j]['id'].toString());
+                gebidController = TextEditingController(text: uploaddata[j]['GebID'].toString());
+                kwhController = TextEditingController(text: uploaddata[j]['kwh'].toString());
+                kvarhController = TextEditingController(text: uploaddata[j]['kvarh'].toString());
+                kvahController = TextEditingController(text: uploaddata[j]['kevah'].toString());
+                mdController = TextEditingController(text: uploaddata[j]['md'].toString());
+                turbineController = TextEditingController(text: uploaddata[j]['turbine'].toString());
+              }
+            }
+            IDControllers.add(idController);
+            KWHControllers.add(kwhController);
+            KVARHControllers.add(kvarhController);
+            KVAHControllers.add(kvahController);
+            MDControllers.add(mdController);
+            TURBINEControllers.add(turbineController);
+            GEBIDControllers.add(gebidController);
+          }
+        }
+        setState(() {
+          isLoad = false;
+        });
       } else {
-        kwh.text = data[0]['kwh'].toString();
-        kvarh.text = data[0]['kvarh'].toString();
-        kvah.text = data[0]['kevah'].toString();
-        md.text = data[0]['md'].toString();
-        turbine.text = data[0]['turbine'].toString();
+        print(responses.statusCode);
+        print(responses.body);
+        setState(() {
+          isLoad = false;
+        });
+        Constants.showtoast("Error Fetching Data.");
       }
-      setState(() {
-        isLoad = false;
-      });
     } else {
-      print(response.statusCode);
-      print(response.body);
-      setState(() {
-        isLoad = false;
-      });
       Constants.showtoast("Error Fetching Data.");
     }
   }
 
-  void AddGEBList() async {
+  void AddGEBList(int i) async {
+    Utils(context).startLoading();
     String kwhh = "0";
     String kvarhh = "0";
     String kvahh = "0";
     String mdd = "0";
     String turbinee = "0";
-    if (kwh.text != "") {
-      kwhh = kwh.text;
+    if (KWHControllers[i].text != "") {
+      kwhh = KWHControllers[i].text;
     }
-    if (kvarh.text != "") {
-      kvarhh = kvarh.text;
+    if (KVARHControllers[i].text != "") {
+      kvarhh = KVARHControllers[i].text;
     }
-    if (kvah.text != "") {
-      kvahh = kvah.text;
+    if (KVAHControllers[i].text != "") {
+      kvahh = KVAHControllers[i].text;
     }
-    if (md.text != "") {
-      mdd = md.text;
+    if (MDControllers[i].text != "") {
+      mdd = MDControllers[i].text;
     }
-    if (turbine.text != "") {
-      turbinee = turbine.text;
+    if (TURBINEControllers[i].text != "") {
+      turbinee = TURBINEControllers[i].text;
     }
     final response = await http.post(
       Uri.parse('${Constants.weblink}UploadReportGebAdd'),
@@ -122,21 +191,20 @@ class _UploadGEBState extends State<UploadGEB>
         'Authorization': 'Bearer $tokenvalue',
       },
       body: jsonEncode(<String, String>{
-        // "id": data[0]['id'].toString(),
         "date": selectedDate.toString().split(" ")[0],
         "kwh": kwhh,
         "kvarh": kvarhh,
         "kevah": kvahh,
         "md": mdd,
         "turbine": turbinee,
-        // "geb_id":"1"
+        "geb_id":listdata[i]['id'].toString(),
       }),
     );
     if (response.statusCode == 200) {
       // data = jsonDecode(response.body);
       Constants.showtoast("Machine Added!");
       Utils(context).stopLoading();
-      FetchUploadGEBList();
+      FetchGEBList();
     } else {
       print(response.statusCode);
       print(response.body);
@@ -145,30 +213,31 @@ class _UploadGEBState extends State<UploadGEB>
     }
   }
 
-  void UpdateGEBList(String id) async {
+  void UpdateGEBList(int i, String id) async {
+    Utils(context).startLoading();
     String kwhh = "0";
     String kvarhh = "0";
     String kvahh = "0";
     String mdd = "0";
     String turbinee = "0";
-    if (kwh.text != "") {
-      kwhh = kwh.text;
+    if (KWHControllers[i].text != "") {
+      kwhh = KWHControllers[i].text;
     }
-    if (kvarh.text != "") {
-      kvarhh = kvarh.text;
+    if (KVARHControllers[i].text != "") {
+      kvarhh = KVARHControllers[i].text;
     }
-    if (kvah.text != "") {
-      kvahh = kvah.text;
+    if (KVAHControllers[i].text != "") {
+      kvahh = KVAHControllers[i].text;
     }
-    if (md.text != "") {
-      mdd = md.text;
+    if (MDControllers[i].text != "") {
+      mdd = MDControllers[i].text;
     }
-    if (turbine.text != "") {
-      turbinee = turbine.text;
+    if (TURBINEControllers[i].text != "") {
+      turbinee = TURBINEControllers[i].text;
     }
     final response = await http.post(
       Uri.parse(
-          '${Constants.weblink}UploadReportGebUpdate/${data[0]['id'].toString()}'),
+          '${Constants.weblink}UploadReportGebUpdate/$id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $tokenvalue',
@@ -179,13 +248,14 @@ class _UploadGEBState extends State<UploadGEB>
         "kvarh": kvarhh,
         "kevah": kvahh,
         "md": mdd,
-        "turbine": turbinee
+        "turbine": turbinee,
+        "geb_id":GEBIDControllers[i].text,
       }),
     );
     if (response.statusCode == 200) {
       Constants.showtoast("Machine Updated!");
       Utils(context).stopLoading();
-      FetchUploadGEBList();
+      FetchGEBList();
     } else {
       print(response.statusCode);
       print(response.body);
@@ -194,37 +264,118 @@ class _UploadGEBState extends State<UploadGEB>
     }
   }
 
-  /// machinelist API
-  void FetchGEBMachineList() async {
-    setState(() {
-      isLoad = true;
-    });
-    prefs = await SharedPreferences.getInstance();
-    tokenvalue = prefs.getString("token");
-    print(tokenvalue);
-    final response = await http.get(
-      Uri.parse('${Constants.weblink}GetGebListing'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $tokenvalue',
-      },
-    );
-    if (response.statusCode == 200) {
-      checkdata = jsonDecode(response.body);
-      if (checkdata.length == 0) {
-        islisting = false;
+  void AddUpdateGEBList() async {
+    Utils(context).startLoading();
+    for (int i = 0; i < IDControllers.length; i++) {
+      if (IDControllers[i].text.toString() == "0") {
+
+        if (KWHControllers[i].text != "" || KVARHControllers[i].text != ""|| KVAHControllers[i].text != ""|| TURBINEControllers[i].text != ""|| MDControllers[i].text != ""){
+          print("added");
+          String kwhh = "0";
+          String kvarhh = "0";
+          String kvahh = "0";
+          String mdd = "0";
+          String turbinee = "0";
+          if (KWHControllers[i].text != "") {
+            kwhh = KWHControllers[i].text;
+          }
+          if (KVARHControllers[i].text != "") {
+            kvarhh = KVARHControllers[i].text;
+          }
+          if (KVAHControllers[i].text != "") {
+            kvahh = KVAHControllers[i].text;
+          }
+          if (MDControllers[i].text != "") {
+            mdd = MDControllers[i].text;
+          }
+          if (TURBINEControllers[i].text != "") {
+            turbinee = TURBINEControllers[i].text;
+          }
+          final response = await http.post(
+            Uri.parse('${Constants.weblink}UploadReportGebAdd'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'Authorization': 'Bearer $tokenvalue',
+            },
+            body: jsonEncode(<String, String>{
+              "date": selectedDate.toString().split(" ")[0],
+              "kwh": kwhh,
+              "kvarh": kvarhh,
+              "kevah": kvahh,
+              "md": mdd,
+              "turbine": turbinee,
+              "geb_id":listdata[i]['id'].toString(),
+            }),
+          );
+          if (response.statusCode == 200) {
+            // data = jsonDecode(response.body);
+            // Constants.showtoast("Machine Added!");
+            // Utils(context).stopLoading();
+            // FetchGEBList();
+          } else {
+            // print(response.statusCode);
+            // print(response.body);
+            // Utils(context).stopLoading();
+            Constants.showtoast("Error Updating Data.");
+          }
+
+        } else {
+          print("skipped");
+        }
+      } else {
+        print("update");
+        String kwhh = "0";
+        String kvarhh = "0";
+        String kvahh = "0";
+        String mdd = "0";
+        String turbinee = "0";
+        if (KWHControllers[i].text != "") {
+          kwhh = KWHControllers[i].text;
+        }
+        if (KVARHControllers[i].text != "") {
+          kvarhh = KVARHControllers[i].text;
+        }
+        if (KVAHControllers[i].text != "") {
+          kvahh = KVAHControllers[i].text;
+        }
+        if (MDControllers[i].text != "") {
+          mdd = MDControllers[i].text;
+        }
+        if (TURBINEControllers[i].text != "") {
+          turbinee = TURBINEControllers[i].text;
+        }
+        final response = await http.post(
+          Uri.parse(
+              '${Constants.weblink}UploadReportGebUpdate/${IDControllers[i].text}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $tokenvalue',
+          },
+          body: jsonEncode(<String, String>{
+            "_method": "PUT",
+            "kwh": kwhh,
+            "kvarh": kvarhh,
+            "kevah": kvahh,
+            "md": mdd,
+            "turbine": turbinee,
+            "geb_id":GEBIDControllers[i].text,
+          }),
+        );
+        if (response.statusCode == 200) {
+          // Constants.showtoast("Machine Updated!");
+          // Utils(context).stopLoading();
+
+        } else {
+          // print(response.statusCode);
+          // print(response.body);
+          // Utils(context).stopLoading();
+          Constants.showtoast("Error Updating Data.");
+        }
       }
-      setState(() {
-        isLoad = false;
-      });
-    } else {
-      print(response.statusCode);
-      print(response.body);
-      setState(() {
-        isLoad = false;
-      });
-      Constants.showtoast("Error Fetching Data.");
     }
+    Constants.showtoast("All Report Updated!");
+    Utils(context).stopLoading();
+    FetchGEBList();
   }
 
   @override
@@ -236,427 +387,612 @@ class _UploadGEBState extends State<UploadGEB>
     final GlobalKey<FormState> _key = GlobalKey<FormState>();
     return RefreshIndicator(
       onRefresh: () {
-        return Future(() => FetchUploadGEBList());
+        return Future(() => FetchGEBList());
       },
-      child: RefreshIndicator(
-        onRefresh: () {
-          return Future(() => FetchUploadGEBList());
-        },
-        child: Scaffold(
-          body: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            child: Form(
-              key: _key,
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  Container(
-                    height: 40,
-                    child: GestureDetector(
-                      onTap: () {
-                        _selectDate(context);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  height: 40,
-                                  width: 40,
-                                  child: Image.asset(
-                                    "assets/icons/calendar.png",
-                                    color: Constants.primaryColor,
-                                  )),
-                              SizedBox(
-                                height: 30,
-                                width: 100,
-                                child: Center(
-                                  child: Text(
-                                    formattedDate,
-                                    style: TextStyle(
-                                        color: Constants.secondaryColor,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: Constants.popins),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  height: 40,
-                                  width: 40,
-                                  child: Image.asset(
-                                    "assets/icons/down.png",
-                                    color: Constants.primaryColor,
-                                  )),
-                            ],
-                          ),
-                          Container(
-                            height: 30,
-                            padding: const EdgeInsets.only(right: 15.0),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  if (_key.currentState!.validate()) {
-                                    _key.currentState!.save();
-                                    if (islisting == false) {
-                                      showDialog<String>(
-                                        context: context,
-                                        builder: (BuildContext context) =>
-                                            AlertDialog(
-                                          content: const Text(
-                                              'Please Add GEB data to Machine List First.'),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, 'OK'),
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      Utils(context).startLoading();
-                                      if (data.length == 0) {
-                                        AddGEBList();
-                                      } else {
-                                        UpdateGEBList(data[0]["id"].toString());
-                                      }
-                                    }
-                                  } else {
-                                    Constants.showtoast(
-                                        "please fill all the fields");
-                                  }
-                                });
-                              },
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Constants.primaryColor)),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(" Sumbit  ",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: Constants.popins,
-                                          fontSize: 14)),
-                                  Image.asset(
-                                    "assets/icons/Edit.png",
-                                    height: 16,
-                                  )
-                                ],
-                              ),
+      child: Scaffold(
+        body: Column(
+          children: [
+            const SizedBox(height: 10),
+            Container(
+              height: 40,
+              child: GestureDetector(
+                onTap: () {
+                  _selectDate(context);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                            padding: const EdgeInsets.all(8.0),
+                            height: 40,
+                            width: 40,
+                            child: Image.asset(
+                              "assets/icons/calendar.png",
+                              color: Constants.primaryColor,
+                            )),
+                        SizedBox(
+                          height: 30,
+                          width: 100,
+                          child: Center(
+                            child: Text(
+                              formattedDate,
+                              style: TextStyle(
+                                  color: Constants.secondaryColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: Constants.popins),
                             ),
+                          ),
+                        ),
+                        Container(
+                            padding: const EdgeInsets.all(8.0),
+                            height: 40,
+                            width: 40,
+                            child: Image.asset(
+                              "assets/icons/down.png",
+                              color: Constants.primaryColor,
+                            )),
+                      ],
+                    ),
+                    Container(
+                      height: 30,
+                      padding: const EdgeInsets.only(right: 15.0),
+                      // width: 100,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          AddUpdateGEBList();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Constants.primaryColor)),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(" Sumbit All    ",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14)),
+                            Image.asset(
+                              "assets/icons/Edit.png",
+                              height: 16,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            (isLoad == true)
+                ? SizedBox(
+                    height: 500,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Constants.primaryColor,
+                      ),
+                    ),
+                  )
+                : (listdata.length == 0)
+                ? Container(
+              height: 300,
+              child: Center(
+                child: Text(
+                  "no machines found",
+                  style: TextStyle(
+                      fontFamily: Constants.popins,
+                      color: Constants.textColor,
+                      // fontWeight: FontWeight.w600,
+                      fontSize: 15),
+                ),
+              ),
+            )
+                : Expanded(
+              child: ListView.builder(
+                itemCount: listdata.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.all(
+                            Radius.circular(15.0)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 3,
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  (isLoad == true)
-                      ? SizedBox(
-                          height: 500,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Constants.primaryColor,
-                            ),
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 15),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                            // crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "KWH",
-                                    style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                        // fontWeight: FontWeight.w600,
-                                        fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    height: 35,
-                                    width: w * 0.4,
-                                    child: TextFormField(
-                                      keyboardType: TextInputType.number,
-                                      controller: kwh,
-                                      style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                      ),
-                                      decoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.only(
-                                              bottom: 10.0, left: 10.0),
-                                          isDense: true,
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                                color: Colors.grey.shade300,
-                                                width: 1.0),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Constants.primaryColor,
-                                                width: 2.0),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          filled: true,
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey[400],
-                                            fontFamily: Constants.popins,
-                                          ),
-                                          // hintText: "first name",
-                                          fillColor: Colors.white70),
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                listdata[index]['machine_name'].toString(),
+                                style: TextStyle(
+                                    fontFamily: Constants.popins,
+                                    color: Constants.textColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15),
                               ),
-                              const SizedBox(height: 15),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "KVARH",
-                                    style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                        // fontWeight: FontWeight.w600,
-                                        fontSize: 16),
+                              Container(
+                                height: 30,
+                                padding: const EdgeInsets.only(
+                                    right: 15.0),
+                                // width: 100,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    print(IDControllers[index].text);
+                                    if (IDControllers[index].text ==
+                                        "0") {
+                                      // print(listdata[index]['id']);
+                                      print("added");
+                                      AddGEBList(index);
+                                    } else {
+                                      print("updated");
+                                      print(GEBIDControllers[index].text);
+                                      UpdateGEBList(index,
+                                          IDControllers[index].text);
+                                    }
+                                  },
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                      MaterialStateProperty
+                                          .all<Color>(Constants
+                                          .primaryColor)),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                    children: [
+                                      Text(" Sumbit  ",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily:
+                                              Constants.popins,
+                                              fontSize: 14)),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    height: 35,
-                                    width: w * 0.4,
-                                    child: TextFormField(
-                                      keyboardType: TextInputType.number,
-                                      controller: kvarh,
-                                      style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                      ),
-                                      decoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.only(
-                                              bottom: 10.0, left: 10.0),
-                                          isDense: true,
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                                color: Colors.grey.shade300,
-                                                width: 1.0),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Constants.primaryColor,
-                                                width: 2.0),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          filled: true,
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey[400],
-                                            fontFamily: Constants.popins,
-                                          ),
-                                          // hintText: "first name",
-                                          fillColor: Colors.white70),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                              const SizedBox(height: 15),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "KVAH",
-                                    style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                        // fontWeight: FontWeight.w600,
-                                        fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    height: 35,
-                                    width: w * 0.4,
-                                    child: TextFormField(
-                                      keyboardType: TextInputType.number,
-                                      controller: kvah,
-                                      style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                      ),
-                                      decoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.only(
-                                              bottom: 10.0, left: 10.0),
-                                          isDense: true,
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                                color: Colors.grey.shade300,
-                                                width: 1.0),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Constants.primaryColor,
-                                                width: 2.0),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          filled: true,
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey[400],
-                                            fontFamily: Constants.popins,
-                                          ),
-                                          // hintText: "first name",
-                                          fillColor: Colors.white70),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 15),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "MD",
-                                    style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                        // fontWeight: FontWeight.w600,
-                                        fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    height: 35,
-                                    width: w * 0.4,
-                                    child: TextFormField(
-                                      keyboardType: TextInputType.number,
-                                      controller: md,
-                                      style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                      ),
-                                      decoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.only(
-                                              bottom: 10.0, left: 10.0),
-                                          isDense: true,
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                                color: Colors.grey.shade300,
-                                                width: 1.0),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Constants.primaryColor,
-                                                width: 2.0),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          filled: true,
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey[400],
-                                            fontFamily: Constants.popins,
-                                          ),
-                                          // hintText: "first name",
-                                          fillColor: Colors.white70),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 15),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Turbine",
-                                    style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                        // fontWeight: FontWeight.w600,
-                                        fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    height: 35,
-                                    width: w * 0.4,
-                                    child: TextFormField(
-                                      keyboardType: TextInputType.number,
-                                      controller: turbine,
-                                      style: TextStyle(
-                                        fontFamily: Constants.popins,
-                                        // color: Constants.textColor,
-                                      ),
-                                      decoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.only(
-                                              bottom: 10.0, left: 10.0),
-                                          isDense: true,
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                                color: Colors.grey.shade300,
-                                                width: 1.0),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Constants.primaryColor,
-                                                width: 2.0),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          filled: true,
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey[400],
-                                            fontFamily: Constants.popins,
-                                          ),
-                                          // hintText: "first name",
-                                          fillColor: Colors.white70),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 15),
-                              Divider()
                             ],
                           ),
-                        ),
-                ],
+                          SizedBox(height: 10),
+                          Container(
+                              width: w / 1,
+                              child: Column(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceAround,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      Text(
+                                        "KWH",
+                                        style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                            fontWeight:
+                                            FontWeight.w600,
+                                            fontSize: 12),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      SizedBox(
+                                        height: 35,
+                                        width: w * 0.25,
+                                        child: TextFormField(
+                                          keyboardType:
+                                          TextInputType.number,
+                                          controller: KWHControllers[index],
+                                          // FlowControllers[index],
+                                          style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                          ),
+                                          decoration: InputDecoration(
+                                              contentPadding:
+                                              const EdgeInsets
+                                                  .only(
+                                                  bottom: 10.0,
+                                                  left: 10.0),
+                                              isDense: true,
+                                              border:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              enabledBorder:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                                borderSide:
+                                                BorderSide(
+                                                    color: Colors
+                                                        .grey
+                                                        .shade300,
+                                                    width: 1.0),
+                                              ),
+                                              focusedBorder:
+                                              OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Constants
+                                                        .primaryColor,
+                                                    width: 2.0),
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              filled: true,
+                                              hintStyle: TextStyle(
+                                                color:
+                                                Colors.grey[400],
+                                                fontFamily:
+                                                Constants.popins,
+                                              ),
+                                              // hintText: "first name",
+                                              fillColor:
+                                              Colors.white70),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      Text(
+                                        "KVARH",
+                                        style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                            fontWeight:
+                                            FontWeight.w600,
+                                            fontSize: 12),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      SizedBox(
+                                        height: 35,
+                                        width: w * 0.25,
+                                        child: TextFormField(
+                                          keyboardType:
+                                          TextInputType.number,
+                                          controller: KVARHControllers[index],
+                                          // UnitControllers[index],
+                                          style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                          ),
+                                          decoration: InputDecoration(
+                                              contentPadding:
+                                              const EdgeInsets
+                                                  .only(
+                                                  bottom: 10.0,
+                                                  left: 10.0),
+                                              isDense: true,
+                                              border:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              enabledBorder:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                                borderSide:
+                                                BorderSide(
+                                                    color: Colors
+                                                        .grey
+                                                        .shade300,
+                                                    width: 1.0),
+                                              ),
+                                              focusedBorder:
+                                              OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Constants
+                                                        .primaryColor,
+                                                    width: 2.0),
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              filled: true,
+                                              hintStyle: TextStyle(
+                                                color:
+                                                Colors.grey[400],
+                                                fontFamily:
+                                                Constants.popins,
+                                              ),
+                                              // hintText: "first name",
+                                              fillColor:
+                                              Colors.white70),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      Text(
+                                        "KVAH",
+                                        style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                            fontWeight:
+                                            FontWeight.w600,
+                                            fontSize: 12),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      SizedBox(
+                                        height: 35,
+                                        width: w * 0.25,
+                                        child: TextFormField(
+                                          keyboardType:
+                                          TextInputType.number,
+                                          controller: KVAHControllers[index],
+                                          // controller:
+                                          // UnitControllers[index],
+                                          style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                          ),
+                                          decoration: InputDecoration(
+                                              contentPadding:
+                                              const EdgeInsets
+                                                  .only(
+                                                  bottom: 10.0,
+                                                  left: 10.0),
+                                              isDense: true,
+                                              border:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              enabledBorder:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                                borderSide:
+                                                BorderSide(
+                                                    color: Colors
+                                                        .grey
+                                                        .shade300,
+                                                    width: 1.0),
+                                              ),
+                                              focusedBorder:
+                                              OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Constants
+                                                        .primaryColor,
+                                                    width: 2.0),
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              filled: true,
+                                              hintStyle: TextStyle(
+                                                color:
+                                                Colors.grey[400],
+                                                fontFamily:
+                                                Constants.popins,
+                                              ),
+                                              // hintText: "first name",
+                                              fillColor:
+                                              Colors.white70),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      Text(
+                                        "MD",
+                                        style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                            fontWeight:
+                                            FontWeight.w600,
+                                            fontSize: 12),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      SizedBox(
+                                        height: 35,
+                                        width: w * 0.25,
+                                        child: TextFormField(
+                                          keyboardType:
+                                          TextInputType.number,
+                                          controller: MDControllers[index],
+                                          // UnitControllers[index],
+                                          style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                          ),
+                                          decoration: InputDecoration(
+                                              contentPadding:
+                                              const EdgeInsets
+                                                  .only(
+                                                  bottom: 10.0,
+                                                  left: 10.0),
+                                              isDense: true,
+                                              border:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              enabledBorder:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                                borderSide:
+                                                BorderSide(
+                                                    color: Colors
+                                                        .grey
+                                                        .shade300,
+                                                    width: 1.0),
+                                              ),
+                                              focusedBorder:
+                                              OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Constants
+                                                        .primaryColor,
+                                                    width: 2.0),
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              filled: true,
+                                              hintStyle: TextStyle(
+                                                color:
+                                                Colors.grey[400],
+                                                fontFamily:
+                                                Constants.popins,
+                                              ),
+                                              // hintText: "first name",
+                                              fillColor:
+                                              Colors.white70),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Turbine",
+                                        style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                            fontWeight:
+                                            FontWeight.w600,
+                                            fontSize: 12),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      SizedBox(
+                                        height: 35,
+                                        width: w * 0.25,
+                                        child: TextFormField(
+                                          keyboardType:
+                                          TextInputType.number,
+                                          controller: TURBINEControllers[index],
+                                          // UnitControllers[index],
+                                          style: TextStyle(
+                                            fontFamily:
+                                            Constants.popins,
+                                            // color: Constants.textColor,
+                                          ),
+                                          decoration: InputDecoration(
+                                              contentPadding:
+                                              const EdgeInsets
+                                                  .only(
+                                                  bottom: 10.0,
+                                                  left: 10.0),
+                                              isDense: true,
+                                              border:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              enabledBorder:
+                                              OutlineInputBorder(
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                                borderSide:
+                                                BorderSide(
+                                                    color: Colors
+                                                        .grey
+                                                        .shade300,
+                                                    width: 1.0),
+                                              ),
+                                              focusedBorder:
+                                              OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Constants
+                                                        .primaryColor,
+                                                    width: 2.0),
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(
+                                                    8.0),
+                                              ),
+                                              filled: true,
+                                              hintStyle: TextStyle(
+                                                color:
+                                                Colors.grey[400],
+                                                fontFamily:
+                                                Constants.popins,
+                                              ),
+                                              // hintText: "first name",
+                                              fillColor:
+                                              Colors.white70),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ))
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

@@ -121,7 +121,8 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
     prefs = await SharedPreferences.getInstance();
     tokenvalue = prefs.getString("token");
     final response = await http.get(
-      Uri.parse('${Constants.weblink}GetFlueGasSteamBolierListingData/${selectedDate.toString().split(" ")[0]}'),
+      Uri.parse(
+          '${Constants.weblink}GetFlueGasSteamBolierListingData/${selectedDate.toString().split(" ")[0]}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $tokenvalue',
@@ -269,6 +270,78 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
     FetchFlueSteamList();
   }
 
+  void AddUpdateFlueSteamList() async {
+    Utils(context).startLoading();
+    for (int i = 0; i < IDControllers.length; i++) {
+      if (IDControllers[i].text.toString() == "0") {
+        if (ValueControllers[i].text != "" || TempControllers[i].text != "") {
+          String value = "0";
+          String temp = "0";
+          if (ValueControllers[i].text != "") {
+            value = ValueControllers[i].text;
+          }
+          if (TempControllers[i].text != "") {
+            temp = TempControllers[i].text;
+          }
+          final response = await http.post(
+            Uri.parse('${Constants.weblink}FlueGasSteamBoilerReportUploadAdd'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'Authorization': 'Bearer $tokenvalue',
+            },
+            body: jsonEncode(<String, String>{
+              "date": selectedDate.toString().split(" ")[0],
+              "machine_id": listdata[i]["id"].toString(),
+              "value": value,
+              "temperature": temp
+            }),
+          );
+          if (response.statusCode == 200) {
+            // data = jsonDecode(response.body);
+            // if (i == listdata.length - 1) {
+            // Constants.showtoast("Report Added!");
+            // Utils(context).stopLoading();
+            // }
+            // Constants.showtoast("Report Updated!");
+          } else {
+            // print(response.statusCode);
+            // print(response.body);
+            Constants.showtoast("Error Updating Data.");
+            // Utils(context).stopLoading();
+          }
+        } else {
+          print('skipped');
+        }
+      } else {
+        String value = "0";
+        String temp = "0";
+        if (ValueControllers[i].text != "") {
+          value = ValueControllers[i].text;
+        }
+        if (TempControllers[i].text != "") {
+          temp = TempControllers[i].text;
+        }
+        final response = await http.put(
+          Uri.parse(
+              '${Constants.weblink}FlueGasSteamBoilerReportUploadUpdate/${IDControllers[i].text}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $tokenvalue',
+          },
+          body:
+              jsonEncode(<String, String>{"value": value, "temperature": temp}),
+        );
+        if (response.statusCode == 200) {
+        } else {
+          Constants.showtoast("Error Updating Data.");
+        }
+      }
+    }
+    Constants.showtoast("All Report Updated!");
+    Utils(context).stopLoading();
+    FetchFlueSteamList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
@@ -332,6 +405,33 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
                               )),
                           // Icon(Icons.l, color: Colors.white,),
                         ],
+                      ),
+                      Container(
+                        height: 30,
+                        padding: const EdgeInsets.only(right: 15.0),
+                        // width: 100,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            AddUpdateFlueSteamList();
+                          },
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Constants.primaryColor)),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(" Sumbit All    ",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: Constants.popins,
+                                      fontSize: 14)),
+                              Image.asset(
+                                "assets/icons/Edit.png",
+                                height: 16,
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -695,7 +795,8 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
     prefs = await SharedPreferences.getInstance();
     tokenvalue = prefs.getString("token");
     final response = await http.get(
-      Uri.parse('${Constants.weblink}GetFlueGasThermoPackListingData/${selectedDate.toString().split(" ")[0]}'),
+      Uri.parse(
+          '${Constants.weblink}GetFlueGasThermoPackListingData/${selectedDate.toString().split(" ")[0]}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $tokenvalue',
@@ -767,38 +868,38 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
   void AddFlueThermoList(int i) async {
     Utils(context).startLoading();
     // for (int i = 0; i < listdata.length; i++) {
-      String value = "0";
-      String temp = "0";
-      if (ValueControllers[i].text != "") {
-        value = ValueControllers[i].text;
-      }
-      if (TempControllers[i].text != "") {
-        temp = TempControllers[i].text;
-      }
-      final response = await http.post(
-        Uri.parse('${Constants.weblink}FlueGasThermoPackReportUploadAdd'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $tokenvalue',
-        },
-        body: jsonEncode(<String, String>{
-          "date": selectedDate.toString().split(" ")[0],
-          "machine_id": listdata[i]["id"].toString(),
-          "value": value,
-          "temperature": temp
-        }),
-      );
-      if (response.statusCode == 200) {
-        // if (i == listdata.length - 1) {
-          Constants.showtoast("Report Added!");
-          Utils(context).stopLoading();
-        // }
-      } else {
-        print(response.statusCode);
-        print(response.body);
-        Constants.showtoast("Error Updating Data.");
-        Utils(context).stopLoading();
-      }
+    String value = "0";
+    String temp = "0";
+    if (ValueControllers[i].text != "") {
+      value = ValueControllers[i].text;
+    }
+    if (TempControllers[i].text != "") {
+      temp = TempControllers[i].text;
+    }
+    final response = await http.post(
+      Uri.parse('${Constants.weblink}FlueGasThermoPackReportUploadAdd'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $tokenvalue',
+      },
+      body: jsonEncode(<String, String>{
+        "date": selectedDate.toString().split(" ")[0],
+        "machine_id": listdata[i]["id"].toString(),
+        "value": value,
+        "temperature": temp
+      }),
+    );
+    if (response.statusCode == 200) {
+      // if (i == listdata.length - 1) {
+      Constants.showtoast("Report Added!");
+      Utils(context).stopLoading();
+      // }
+    } else {
+      print(response.statusCode);
+      print(response.body);
+      Constants.showtoast("Error Updating Data.");
+      Utils(context).stopLoading();
+    }
     // }
     FetchFlueThermoList();
   }
@@ -806,37 +907,114 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
   void UpdateFlueThermoList(int i, String id) async {
     Utils(context).startLoading();
     // for (int i = 0; i < listdata.length; i++) {
-      String value = "0";
-      String temp = "0";
-      if (ValueControllers[i].text != "") {
-        value = ValueControllers[i].text;
-      }
-      if (TempControllers[i].text != "") {
-        temp = TempControllers[i].text;
-      }
-      final response = await http.put(
-        Uri.parse(
-            '${Constants.weblink}FlueGasThermoPackReportUploadUpdate/$id'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $tokenvalue',
-        },
-        body: jsonEncode(<String, String>{"value": value, "temperature": temp}),
-      );
-      if (response.statusCode == 200) {
-        // data = jsonDecode(response.body);
-        // if (i == listdata.length - 1) {
-          Constants.showtoast("Report Updated!");
-          Utils(context).stopLoading();
-        // }
-        // Constants.showtoast("Report Updated!");
-      } else {
-        print(response.statusCode);
-        print(response.body);
-        Constants.showtoast("Error Updating Data.");
-        Utils(context).stopLoading();
-      }
+    String value = "0";
+    String temp = "0";
+    if (ValueControllers[i].text != "") {
+      value = ValueControllers[i].text;
+    }
+    if (TempControllers[i].text != "") {
+      temp = TempControllers[i].text;
+    }
+    final response = await http.put(
+      Uri.parse('${Constants.weblink}FlueGasThermoPackReportUploadUpdate/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $tokenvalue',
+      },
+      body: jsonEncode(<String, String>{"value": value, "temperature": temp}),
+    );
+    if (response.statusCode == 200) {
+      // data = jsonDecode(response.body);
+      // if (i == listdata.length - 1) {
+      Constants.showtoast("Report Updated!");
+      Utils(context).stopLoading();
+      // }
+      // Constants.showtoast("Report Updated!");
+    } else {
+      print(response.statusCode);
+      print(response.body);
+      Constants.showtoast("Error Updating Data.");
+      Utils(context).stopLoading();
+    }
     // }
+    FetchFlueThermoList();
+  }
+
+  void AddUpdateFlueThermoList() async {
+    Utils(context).startLoading();
+    for (int i = 0; i < IDControllers.length; i++) {
+      if (IDControllers[i].text.toString() == "0") {
+        if (ValueControllers[i].text != "" || TempControllers[i].text != ""){
+          print('added');
+          String value = "0";
+          String temp = "0";
+          if (ValueControllers[i].text != "") {
+            value = ValueControllers[i].text;
+          }
+          if (TempControllers[i].text != "") {
+            temp = TempControllers[i].text;
+          }
+          final response = await http.post(
+            Uri.parse('${Constants.weblink}FlueGasThermoPackReportUploadAdd'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'Authorization': 'Bearer $tokenvalue',
+            },
+            body: jsonEncode(<String, String>{
+              "date": selectedDate.toString().split(" ")[0],
+              "machine_id": listdata[i]["id"].toString(),
+              "value": value,
+              "temperature": temp
+            }),
+          );
+          if (response.statusCode == 200) {
+            // if (i == listdata.length - 1) {
+            // Constants.showtoast("Report Added!");
+            // Utils(context).stopLoading();
+            // }
+          } else {
+            // print(response.statusCode);
+            // print(response.body);
+            Constants.showtoast("Error Updating Data.");
+          }
+        } else {
+          print('skipped');
+        }
+      } else {
+        print('update');
+        String value = "0";
+        String temp = "0";
+        if (ValueControllers[i].text != "") {
+          value = ValueControllers[i].text;
+        }
+        if (TempControllers[i].text != "") {
+          temp = TempControllers[i].text;
+        }
+        final response = await http.put(
+          Uri.parse('${Constants.weblink}FlueGasThermoPackReportUploadUpdate/${IDControllers[i].text}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $tokenvalue',
+          },
+          body: jsonEncode(<String, String>{"value": value, "temperature": temp}),
+        );
+        if (response.statusCode == 200) {
+          // data = jsonDecode(response.body);
+          // if (i == listdata.length - 1) {
+          // Constants.showtoast("Report Updated!");
+          // Utils(context).stopLoading();
+          // }
+          // Constants.showtoast("Report Updated!");
+        } else {
+          // print(response.statusCode);
+          // print(response.body);
+          Constants.showtoast("Error Updating Data.");
+          // Utils(context).stopLoading();
+        }
+      }
+    }
+    Constants.showtoast("All Report Updated!");
+    Utils(context).stopLoading();
     FetchFlueThermoList();
   }
 
@@ -903,6 +1081,33 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
                               )),
                           // Icon(Icons.l, color: Colors.white,),
                         ],
+                      ),
+                      Container(
+                        height: 30,
+                        padding: const EdgeInsets.only(right: 15.0),
+                        // width: 100,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            AddUpdateFlueThermoList();
+                          },
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Constants.primaryColor)),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(" Sumbit All    ",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: Constants.popins,
+                                      fontSize: 14)),
+                              Image.asset(
+                                "assets/icons/Edit.png",
+                                height: 16,
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -973,16 +1178,18 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
                                           ),
                                           Container(
                                             height: 30,
-                                            padding: const EdgeInsets.only(right: 15.0),
+                                            padding: const EdgeInsets.only(
+                                                right: 15.0),
                                             // width: 100,
                                             child: ElevatedButton(
                                               onPressed: () {
-                                                if (_key.currentState!.validate()) {
+                                                if (_key.currentState!
+                                                    .validate()) {
                                                   _key.currentState!.save();
                                                   // Utils(context).startLoading();
 
                                                   if (IDControllers[index]
-                                                      .text ==
+                                                          .text ==
                                                       "0") {
                                                     AddFlueThermoList(index);
                                                   } else {
@@ -994,17 +1201,20 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
                                                 }
                                               },
                                               style: ButtonStyle(
-                                                  backgroundColor: MaterialStateProperty.all<Color>(
-                                                      Constants.primaryColor)),
+                                                  backgroundColor:
+                                                      MaterialStateProperty
+                                                          .all<Color>(Constants
+                                                              .primaryColor)),
                                               child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   Text(" Sumbit  ",
                                                       style: TextStyle(
                                                           color: Colors.white,
-                                                          fontFamily: Constants.popins,
+                                                          fontFamily:
+                                                              Constants.popins,
                                                           fontSize: 14)),
-
                                                 ],
                                               ),
                                             ),

@@ -222,6 +222,90 @@ class _UploadUtilityState extends State<UploadUtility>
     FetchUtilityList();
   }
 
+  void AddUpdateUtilityList() async {
+    Utils(context).startLoading();
+    for (int i = 0; i < IDControllers.length; i++) {
+      if (IDControllers[i].text.toString() == "0") {
+        if (EMControllers[i].text != "" || HMControllers[i].text != "") {
+          print('Added');
+          String emvalue;
+          String hmvalue;
+          if (EMControllers[i].text == "") {
+            emvalue = "0";
+          } else {
+            emvalue = EMControllers[i].text;
+          }
+          if (HMControllers[i].text == "") {
+            hmvalue = "0";
+          } else {
+            hmvalue = HMControllers[i].text;
+          }
+          final response = await http.post(
+            Uri.parse('${Constants.weblink}GetUtiltiReportUploadQueryAdd'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'Authorization': 'Bearer $tokenvalue',
+            },
+            body: jsonEncode(<String, String>{
+              "uitility_categories_id":
+              subcatdata[i]["uitility_categories_id"].toString(),
+              "uitility_subcategories_id": subcatdata[i]["id"].toString(),
+              "date": selectedDate.toString().split(" ")[0],
+              "em": emvalue,
+              "hm": hmvalue
+            }),
+          );
+          if (response.statusCode == 200) {
+            // Constants.showtoast("Report Added!");
+            // Utils(context).stopLoading();
+          } else {
+            // print(response.statusCode);
+            // print(response.body);
+            Constants.showtoast("Error Updating Data.");
+            // Utils(context).stopLoading();
+          }
+        } else {
+          print("skipped");
+        }
+      }
+      else {
+        print("update data");
+        String emvalue;
+        String hmvalue;
+        if (EMControllers[i].text == "") {
+          emvalue = "0";
+        } else {
+          emvalue = EMControllers[i].text;
+        }
+        if (HMControllers[i].text == "") {
+          hmvalue = "0";
+        } else {
+          hmvalue = HMControllers[i].text;
+        }
+        final response = await http.put(
+          Uri.parse('${Constants.weblink}GetUtiltiReportUploadQueryUpdated/${IDControllers[i].text}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $tokenvalue',
+          },
+          body: jsonEncode(<String, String>{"em": emvalue, "hm": hmvalue}),
+        );
+        if (response.statusCode == 200) {
+          // Constants.showtoast("Report Updated!");
+          // Utils(context).stopLoading();
+        } else {
+          // print(response.statusCode);
+          // print(response.body);
+          Constants.showtoast("Error Updating Data.");
+
+        }
+      }
+    }
+    Constants.showtoast("All Report Updated!");
+    Utils(context).stopLoading();
+    FetchUtilityList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
@@ -282,38 +366,33 @@ class _UploadUtilityState extends State<UploadUtility>
                         // Icon(Icons.l, color: Colors.white,),
                       ],
                     ),
-                    // Container(
-                    //   height: 30,
-                    //   padding: const EdgeInsets.only(right: 15.0),
-                    //   // width: 100,
-                    //   child: ElevatedButton(
-                    //     onPressed: () {
-                    //       // Utils(context).startLoading();
-                    //       // if (uploaddata.length == 0) {
-                    //       //   AddUtilityList();
-                    //       // } else {
-                    //       //   UpdateUtilityList();
-                    //       // }
-                    //     },
-                    //     style: ButtonStyle(
-                    //         backgroundColor: MaterialStateProperty.all<Color>(
-                    //             Constants.primaryColor)),
-                    //     child: Row(
-                    //       crossAxisAlignment: CrossAxisAlignment.center,
-                    //       children: [
-                    //         Text(" Sumbit  ",
-                    //             style: TextStyle(
-                    //                 color: Colors.white,
-                    //                 fontFamily: Constants.popins,
-                    //                 fontSize: 14)),
-                    //         Image.asset(
-                    //           "assets/icons/Edit.png",
-                    //           height: 16,
-                    //         )
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
+                    Container(
+                      height: 30,
+                      padding: const EdgeInsets.only(right: 15.0),
+                      // width: 100,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          AddUpdateUtilityList();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Constants.primaryColor)),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(" Sumbit All    ",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14)),
+                            Image.asset(
+                              "assets/icons/Edit.png",
+                              height: 16,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

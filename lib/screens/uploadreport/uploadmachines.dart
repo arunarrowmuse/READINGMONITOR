@@ -65,7 +65,8 @@ class _UploadMachinesState extends State<UploadMachines>
     prefs = await SharedPreferences.getInstance();
     tokenvalue = prefs.getString("token");
     final responsed = await http.get(
-      Uri.parse('${Constants.weblink}GetMachineCategoriesListing/${selectedDate.toString().split(" ")[0]}'),
+      Uri.parse(
+          '${Constants.weblink}GetMachineCategoriesListing/${selectedDate.toString().split(" ")[0]}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $tokenvalue',
@@ -76,7 +77,8 @@ class _UploadMachinesState extends State<UploadMachines>
       print("machine name");
       print(maindata);
       final response = await http.get(
-        Uri.parse('${Constants.weblink}GetMachineSubCategoriesListing/${selectedDate.toString().split(" ")[0]}'),
+        Uri.parse(
+            '${Constants.weblink}GetMachineSubCategoriesListing/${selectedDate.toString().split(" ")[0]}'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer $tokenvalue',
@@ -121,8 +123,7 @@ class _UploadMachinesState extends State<UploadMachines>
               var batchController = TextEditingController(text: "");
               var idController = TextEditingController(text: "0");
               for (int j = 0; j < uploaddata.length; j++) {
-                if (subcatdata[i]['id'] ==
-                    uploaddata[j]['sub_categories_id']){
+                if (subcatdata[i]['id'] == uploaddata[j]['sub_categories_id']) {
                   emController = TextEditingController(
                       text: uploaddata[j]['em'].toString());
                   hmController = TextEditingController(
@@ -142,14 +143,14 @@ class _UploadMachinesState extends State<UploadMachines>
               IDControllers.add(idController);
 
               ///////////////////HANDLING NULL (NOT POSSIBLE RN)///////////////////
-            //  if (uploaddata[i]['em'].toString() == "null") {
-           //     var emController = TextEditingController(text: "");
-           //     EMControllers.add(emController);
-           //   } else {
-             //   var emController = TextEditingController(
-           //         text: uploaddata[i]['em'].toString());
-           //     EMControllers.add(emController);
-          //    }
+              //  if (uploaddata[i]['em'].toString() == "null") {
+              //     var emController = TextEditingController(text: "");
+              //     EMControllers.add(emController);
+              //   } else {
+              //   var emController = TextEditingController(
+              //         text: uploaddata[i]['em'].toString());
+              //     EMControllers.add(emController);
+              //    }
               ////////////////////////////////////////////////////
             }
           }
@@ -179,89 +180,188 @@ class _UploadMachinesState extends State<UploadMachines>
 
   void AddMachinesList(int i) async {
     Utils(context).startLoading();
-      String emvalue = "0";
-      String hmvalue = "0";
-      String water = "0";
-      String batch = "0";
-      if (EMControllers[i].text != "") {
-        emvalue = EMControllers[i].text;
-      }
-      if (HMControllers[i].text != "") {
-        hmvalue = HMControllers[i].text;
-      }
-      if (WaterControllers[i].text != "") {
-        water = WaterControllers[i].text;
-      }
-      if (BatchControllers[i].text != "") {
-        batch = BatchControllers[i].text;
-      }
-      final response = await http.post(
-        Uri.parse('${Constants.weblink}MachineReportUpload'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $tokenvalue',
-        },
-        body: jsonEncode(<String, String>{
-          "categories_id": subcatdata[i]['categories_id'].toString(),
-          "sub_categories_id": subcatdata[i]['id'].toString(),
-          "date": selectedDate.toString().split(" ")[0],
-          "water": water,
-          "batch": batch,
-          "em": emvalue,
-          "hm": hmvalue,
-        }),
-      );
-      if (response.statusCode == 200) {
-          Constants.showtoast("Report Added!");
-          Utils(context).stopLoading();
-      } else {
-        Utils(context).stopLoading();
-        Constants.showtoast("Error Adding Data.");
-      }
+    String emvalue = "0";
+    String hmvalue = "0";
+    String water = "0";
+    String batch = "0";
+    if (EMControllers[i].text != "") {
+      emvalue = EMControllers[i].text;
+    }
+    if (HMControllers[i].text != "") {
+      hmvalue = HMControllers[i].text;
+    }
+    if (WaterControllers[i].text != "") {
+      water = WaterControllers[i].text;
+    }
+    if (BatchControllers[i].text != "") {
+      batch = BatchControllers[i].text;
+    }
+    final response = await http.post(
+      Uri.parse('${Constants.weblink}MachineReportUpload'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $tokenvalue',
+      },
+      body: jsonEncode(<String, String>{
+        "categories_id": subcatdata[i]['categories_id'].toString(),
+        "sub_categories_id": subcatdata[i]['id'].toString(),
+        "date": selectedDate.toString().split(" ")[0],
+        "water": water,
+        "batch": batch,
+        "em": emvalue,
+        "hm": hmvalue,
+      }),
+    );
+    if (response.statusCode == 200) {
+      Constants.showtoast("Report Added!");
+      Utils(context).stopLoading();
+    } else {
+      Utils(context).stopLoading();
+      Constants.showtoast("Error Adding Data.");
+    }
     FetchMachinesList();
   }
 
   void UpdateMachinesList(int i, String id) async {
     Utils(context).startLoading();
-      String emvalue = "0";
-      String hmvalue = "0";
-      String water = "0";
-      String batch = "0";
-      if (EMControllers[i].text != "") {
-        emvalue = EMControllers[i].text;
+    String emvalue = "0";
+    String hmvalue = "0";
+    String water = "0";
+    String batch = "0";
+    if (EMControllers[i].text != "") {
+      emvalue = EMControllers[i].text;
+    }
+    if (HMControllers[i].text != "") {
+      hmvalue = HMControllers[i].text;
+    }
+    if (WaterControllers[i].text != "") {
+      water = WaterControllers[i].text;
+    }
+    if (BatchControllers[i].text != "") {
+      batch = BatchControllers[i].text;
+    }
+    final response = await http.put(
+      Uri.parse('${Constants.weblink}MachineReportUploadUpdated/$id}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $tokenvalue',
+      },
+      body: jsonEncode(<String, String>{
+        "water": water,
+        "batch": batch,
+        "em": emvalue,
+        "hm": hmvalue,
+      }),
+    );
+    if (response.statusCode == 200) {
+      Constants.showtoast("Report Updated!");
+      Utils(context).stopLoading();
+    } else {
+      print(response.statusCode);
+      print(response.body);
+      Utils(context).stopLoading();
+      Constants.showtoast("Error Updating Data.");
+    }
+    FetchMachinesList();
+  }
+
+  void AddUpdateMachinesList() async {
+    Utils(context).startLoading();
+    for (int i = 0; i < IDControllers.length; i++) {
+      if (IDControllers[i].text.toString() == "0") {
+        if (EMControllers[i].text != "" ||
+            HMControllers[i].text != "" ||
+            WaterControllers[i].text != "" ||
+            BatchControllers[i].text != "") {
+          print("added");
+          String emvalue = "0";
+          String hmvalue = "0";
+          String water = "0";
+          String batch = "0";
+          if (EMControllers[i].text != "") {
+            emvalue = EMControllers[i].text;
+          }
+          if (HMControllers[i].text != "") {
+            hmvalue = HMControllers[i].text;
+          }
+          if (WaterControllers[i].text != "") {
+            water = WaterControllers[i].text;
+          }
+          if (BatchControllers[i].text != "") {
+            batch = BatchControllers[i].text;
+          }
+          final response = await http.post(
+            Uri.parse('${Constants.weblink}MachineReportUpload'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'Authorization': 'Bearer $tokenvalue',
+            },
+            body: jsonEncode(<String, String>{
+              "categories_id": subcatdata[i]['categories_id'].toString(),
+              "sub_categories_id": subcatdata[i]['id'].toString(),
+              "date": selectedDate.toString().split(" ")[0],
+              "water": water,
+              "batch": batch,
+              "em": emvalue,
+              "hm": hmvalue,
+            }),
+          );
+          if (response.statusCode == 200) {
+            // Constants.showtoast("Report Added!");
+            // Utils(context).stopLoading();
+          } else {
+            // Utils(context).stopLoading();
+            Constants.showtoast("Error Adding Data.");
+          }
+        } else {
+          print("skipped");
+        }
       }
-      if (HMControllers[i].text != "") {
-        hmvalue = HMControllers[i].text;
+      else {
+        print("update data");
+        String emvalue = "0";
+        String hmvalue = "0";
+        String water = "0";
+        String batch = "0";
+        if (EMControllers[i].text != "") {
+          emvalue = EMControllers[i].text;
+        }
+        if (HMControllers[i].text != "") {
+          hmvalue = HMControllers[i].text;
+        }
+        if (WaterControllers[i].text != "") {
+          water = WaterControllers[i].text;
+        }
+        if (BatchControllers[i].text != "") {
+          batch = BatchControllers[i].text;
+        }
+        final response = await http.put(
+          Uri.parse('${Constants.weblink}MachineReportUploadUpdated/${IDControllers[i].text}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $tokenvalue',
+          },
+          body: jsonEncode(<String, String>{
+            "water": water,
+            "batch": batch,
+            "em": emvalue,
+            "hm": hmvalue,
+          }),
+        );
+        if (response.statusCode == 200) {
+          // Constants.showtoast("Report Updated!");
+          // Utils(context).stopLoading();
+        } else {
+          print(response.statusCode);
+          print(response.body);
+          // Utils(context).stopLoading();
+          Constants.showtoast("Error Updating Data.");
+        }
       }
-      if (WaterControllers[i].text != "") {
-        water = WaterControllers[i].text;
-      }
-      if (BatchControllers[i].text != "") {
-        batch = BatchControllers[i].text;
-      }
-      final response = await http.put(
-        Uri.parse(
-            '${Constants.weblink}MachineReportUploadUpdated/$id}'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $tokenvalue',
-        },
-        body: jsonEncode(<String, String>{
-          "water": water,
-          "batch": batch,
-          "em": emvalue,
-          "hm": hmvalue,
-        }),
-      );
-      if (response.statusCode == 200) {
-          Constants.showtoast("Report Updated!");
-          Utils(context).stopLoading();
-      } else {
-        print(response.statusCode);
-        print(response.body);
-        Utils(context).stopLoading();
-        Constants.showtoast("Error Updating Data.");
-      }
+
+    }
+    Constants.showtoast("All Report Updated!");
+    Utils(context).stopLoading();
     FetchMachinesList();
   }
 
@@ -288,10 +388,9 @@ class _UploadMachinesState extends State<UploadMachines>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    // Icon(Icons.calendar_month, color: Colors.white,),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        // Icon(Icons.calendar_month, color: Colors.white,),
                         Container(
                             padding: const EdgeInsets.all(8.0),
                             height: 40,
@@ -322,9 +421,42 @@ class _UploadMachinesState extends State<UploadMachines>
                               "assets/icons/down.png",
                               color: Constants.primaryColor,
                             )),
-                        // Icon(Icons.l, color: Colors.white,),
                       ],
                     ),
+                    Container(
+                      height: 30,
+                      padding: const EdgeInsets.only(right: 15.0),
+                      // width: 100,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Utils(context).startLoading();
+                          // if (uploaddata.length == 0) {
+                          //   AddUtilityList();
+                          // } else {
+                          //   UpdateUtilityList();
+                          // }
+                          AddUpdateMachinesList();
+                        },
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Constants.primaryColor)),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(" Sumbit All    ",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: Constants.popins,
+                                    fontSize: 14)),
+                            Image.asset(
+                              "assets/icons/Edit.png",
+                              height: 16,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Icon(Icons.l, color: Colors.white,),
                   ],
                 ),
               ),
@@ -364,7 +496,8 @@ class _UploadMachinesState extends State<UploadMachines>
                             child: Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       // mainAxisAlignment:
@@ -373,20 +506,26 @@ class _UploadMachinesState extends State<UploadMachines>
                                       children: [
                                         for (var item in maindata)
                                           (item['id'].toString() ==
-                                                  subcatdata[index]['categories_id']
+                                                  subcatdata[index]
+                                                          ['categories_id']
                                                       .toString())
                                               ? Text(
-                                                  item['categories'].toString() +
+                                                  item['categories']
+                                                          .toString() +
                                                       "  : ",
                                                   style: TextStyle(
-                                                      fontFamily: Constants.popins,
-                                                      color: Constants.textColor,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontFamily:
+                                                          Constants.popins,
+                                                      color:
+                                                          Constants.textColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 15),
                                                 )
                                               : Container(),
                                         Text(
-                                          subcatdata[index]['sub_name'].toString(),
+                                          subcatdata[index]['sub_name']
+                                              .toString(),
                                           style: TextStyle(
                                               fontFamily: Constants.popins,
                                               color: Constants.textColor,
@@ -398,7 +537,7 @@ class _UploadMachinesState extends State<UploadMachines>
                                     Container(
                                       height: 30,
                                       padding:
-                                      const EdgeInsets.only(right: 15.0),
+                                          const EdgeInsets.only(right: 15.0),
                                       // width: 100,
                                       child: ElevatedButton(
                                         onPressed: () {
@@ -413,18 +552,18 @@ class _UploadMachinesState extends State<UploadMachines>
                                         },
                                         style: ButtonStyle(
                                             backgroundColor:
-                                            MaterialStateProperty.all<
-                                                Color>(
-                                                Constants.primaryColor)),
+                                                MaterialStateProperty.all<
+                                                        Color>(
+                                                    Constants.primaryColor)),
                                         child: Row(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                           children: [
                                             Text(" Sumbit  ",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontFamily:
-                                                    Constants.popins,
+                                                        Constants.popins,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 12)),
                                             // Image.asset(
