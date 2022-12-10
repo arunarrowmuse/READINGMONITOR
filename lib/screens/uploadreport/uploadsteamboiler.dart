@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,6 +31,10 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
   late SharedPreferences prefs;
   String? tokenvalue;
 
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -50,6 +57,35 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
     FetchUploadSteamList();
     FetchSteamMachineList();
   }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+    getconnectivity();
+  }
+
+
+  getconnectivity() => subscription = Connectivity()
+      .onConnectivityChanged
+      .listen((ConnectivityResult result) async {
+    isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    if (!isDeviceConnected && isAlertSet == false) {
+      Constants.showtoast("No internet Connection");
+      print("You are Offline!");
+      setState(() {
+        isAlertSet = true;
+      });
+    } else {
+      print("You are Online!");
+      tokenvalue = prefs.getString("token");
+      String? data = prefs.getString("backuplinklist");
+      Utils(context).backuptoserver(tokenvalue!, data!);
+      prefs.setString("backuplinklist", jsonEncode([]));
+      print("prefs.getString");
+      print(prefs.getString("backuplinklist"));
+    }
+  });
 
   void FetchUploadSteamList() async {
     setState(() {
@@ -302,8 +338,8 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
                           padding: const EdgeInsets.only(right: 15.0),
                           // width: 100,
                           child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
+                            onPressed: () async {
+                              // setState(()  {
                                 if (_key.currentState!.validate()) {
                                   _key.currentState!.save();
                                   if (islisted == false) {
@@ -320,18 +356,115 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
                                       ),
                                     );
                                   } else {
-                                    Utils(context).startLoading();
-                                    if (data.length == 0) {
-                                      AddUploadSteamList();
-                                    } else {
-                                      UpdateUploadSteamList();
+                                    var backupbody;
+                                    var backuplink;
+                                    String bfww = "0";
+                                    String ro_waterr = "0";
+                                    String coalone = "0";
+                                    String coaltwo = "0";
+                                    String bfwtemperature = "0";
+                                    if (bfw.text != "") {
+                                      bfww = bfw.text;
                                     }
+                                    if (ro_water.text != "") {
+                                      ro_waterr = ro_water.text;
+                                    }
+                                    if (coal1.text != "") {
+                                      coalone = coal1.text;
+                                    }
+                                    if (coal2.text != "") {
+                                      coaltwo = coal2.text;
+                                    }
+                                    if (bfwtemp.text != "") {
+                                      bfwtemperature = bfwtemp.text;
+                                    }
+                                    setState(
+                                            () => isAlertSet = false);
+                                    isDeviceConnected =
+                                        await InternetConnectionChecker()
+                                        .hasConnection;
+                                    if (!isDeviceConnected) {
+                                      // print("offline");
+                                      Constants.showtoast(
+                                          "No internet, Saving data offline.");
+                                      // setState(
+                                      //         () => isAlertSet = true);
+                                      if (data.length == 0) {
+                                        // print('add backup');
+                                        backupbody = <String, String>{
+                                          "date": selectedDate.toString().split(" ")[0],
+                                          "bfw": bfww,
+                                          "ro_water": ro_waterr,
+                                          "coal_1": coalone,
+                                          "coal_2": coaltwo,
+                                          "bfw_temperature": bfwtemperature,
+                                        };
+                                        backuplink =
+                                        "${Constants.weblink}SteamBoliersDataAdd";
+                                      } else {
+                                        // print('update backup');
+                                        backupbody = <String, String>{
+                                          '_method': "PUT",
+                                          "id": data[0]['id'].toString(),
+                                          "date": selectedDate.toString().split(" ")[0],
+                                          "bfw": bfww,
+                                          "ro_water": ro_waterr,
+                                          "coal_1": coalone,
+                                          "coal_2": coaltwo,
+                                          "bfw_temperature": bfwtemperature
+                                        };
+                                        backuplink =
+                                        "${Constants.weblink}GetSteamBoliersDataQueryUpdated/${data[0]['id'].toString()}";
+                                      }
+                                      prefs.getString(
+                                          "backuplinklist");
+                                      if (prefs.getString(
+                                          "backuplinklist") ==
+                                          null) {
+                                        // print("called");
+                                        prefs.setString(
+                                            "backuplinklist",
+                                            jsonEncode([
+                                              {
+                                                "backuplink":
+                                                backuplink,
+                                                "backupbody":
+                                                backupbody
+                                              }
+                                            ]));
+                                      } else {
+                                        // print("adder");
+                                        String? data =
+                                        prefs.getString(
+                                            "backuplinklist");
+                                        List DecodeUser =
+                                        jsonDecode(data!);
+                                        DecodeUser.add({
+                                          "backuplink": backuplink,
+                                          "backupbody": backupbody
+                                        });
+                                        prefs.setString(
+                                            "backuplinklist",
+                                            jsonEncode(DecodeUser));
+                                      }
+                                      print(json.decode(
+                                          prefs.getString(
+                                              "backuplinklist")!));
+                                    } else {
+                                      Utils(context).startLoading();
+                                      if (data.length == 0) {
+                                        AddUploadSteamList();
+                                      } else {
+                                        UpdateUploadSteamList();
+                                      }
+                                    }
+
                                   }
                                 } else {
                                   Constants.showtoast(
                                       "please fill all the fields");
                                 }
-                              });
+                              // });
                             },
                             style: ButtonStyle(
                                 backgroundColor:
@@ -340,7 +473,7 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(" Sumbit  ",
+                                Text(" Submit  ",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: Constants.popins,

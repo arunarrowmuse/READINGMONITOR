@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,6 +40,10 @@ class _UploadGEBState extends State<UploadGEB>
   var listdata;
   var uploaddata;
 
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -59,6 +66,34 @@ class _UploadGEBState extends State<UploadGEB>
     // FetchUploadGEBList();
     // FetchGEBMachineList();
   }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+
+  }
+
+  getconnectivity() => subscription = Connectivity()
+      .onConnectivityChanged
+      .listen((ConnectivityResult result) async {
+    isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    if (!isDeviceConnected && isAlertSet == false) {
+      Constants.showtoast("No internet Connection");
+      print("You are Offline!");
+      setState(() {
+        isAlertSet = true;
+      });
+    } else {
+      print("You are Online!");
+      tokenvalue = prefs.getString("token");
+      String? data = prefs.getString("backuplinklist");
+      Utils(context).backuptoserver(tokenvalue!, data!);
+      prefs.setString("backuplinklist", jsonEncode([]));
+      print("prefs.getString");
+      print(prefs.getString("backuplinklist"));
+    }
+  });
 
   void FetchGEBList() async {
     KWHControllers.clear();
@@ -442,8 +477,17 @@ class _UploadGEBState extends State<UploadGEB>
                       padding: const EdgeInsets.only(right: 15.0),
                       // width: 100,
                       child: ElevatedButton(
-                        onPressed: () {
-                          AddUpdateGEBList();
+                        onPressed: () async {
+                          setState(() => isAlertSet = false);
+                          isDeviceConnected =
+                              await InternetConnectionChecker().hasConnection;
+                          if (!isDeviceConnected) {
+                            print("offline");
+                            Utils(context).Youareoffline(context);
+                          } else {
+                            print("online");
+                            AddUpdateGEBList();
+                          }
                         },
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -451,7 +495,7 @@ class _UploadGEBState extends State<UploadGEB>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(" Sumbit All    ",
+                            Text(" Submit All    ",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: Constants.popins,
@@ -535,19 +579,119 @@ class _UploadGEBState extends State<UploadGEB>
                                     right: 15.0),
                                 // width: 100,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    print(IDControllers[index].text);
-                                    if (IDControllers[index].text ==
-                                        "0") {
-                                      // print(listdata[index]['id']);
-                                      print("added");
-                                      AddGEBList(index);
-                                    } else {
-                                      print("updated");
-                                      print(GEBIDControllers[index].text);
-                                      UpdateGEBList(index,
-                                          IDControllers[index].text);
+                                  onPressed: () async {
+                                    var backupbody;
+                                    var backuplink;
+                                    setState(
+                                            () => isAlertSet = false);
+                                    isDeviceConnected =
+                                        await InternetConnectionChecker()
+                                        .hasConnection;
+                                    if (!isDeviceConnected) {
+                                      // print("offline");
+                                      Constants.showtoast(
+                                          "No internet, Saving data offline.");
+                                      // setState(
+                                      //         () => isAlertSet = true);
+                                      String kwhh = "0";
+                                      String kvarhh = "0";
+                                      String kvahh = "0";
+                                      String mdd = "0";
+                                      String turbinee = "0";
+                                      if (KWHControllers[index].text != "") {
+                                        kwhh = KWHControllers[index].text;
+                                      }
+                                      if (KVARHControllers[index].text != "") {
+                                        kvarhh = KVARHControllers[index].text;
+                                      }
+                                      if (KVAHControllers[index].text != "") {
+                                        kvahh = KVAHControllers[index].text;
+                                      }
+                                      if (MDControllers[index].text != "") {
+                                        mdd = MDControllers[index].text;
+                                      }
+                                      if (TURBINEControllers[index].text != "") {
+                                        turbinee = TURBINEControllers[index].text;
+                                      }
+                                      if (IDControllers[index].text ==
+                                          "0") {
+                                        // print('add backup');
+                                        backupbody = <String, String>{
+                                          "date": selectedDate.toString().split(" ")[0],
+                                          "kwh": kwhh,
+                                          "kvarh": kvarhh,
+                                          "kevah": kvahh,
+                                          "md": mdd,
+                                          "turbine": turbinee,
+                                          "geb_id":listdata[index]['id'].toString(),
+                                        };
+                                        backuplink =
+                                        "${Constants.weblink}UploadReportGebAdd";
+                                      } else {
+                                        // print('update backup');
+                                        backupbody = <String, String>{
+                                          '_method': "PUT",
+                                          "kwh": kwhh,
+                                          "kvarh": kvarhh,
+                                          "kevah": kvahh,
+                                          "md": mdd,
+                                          "turbine": turbinee,
+                                          "geb_id":GEBIDControllers[index].text,
+                                        };
+                                        backuplink =
+                                        "${Constants.weblink}UploadReportGebUpdate/${IDControllers[index].text}";
+                                      }
+                                      prefs.getString(
+                                          "backuplinklist");
+                                      if (prefs.getString(
+                                          "backuplinklist") ==
+                                          null) {
+                                        // print("called");
+                                        prefs.setString(
+                                            "backuplinklist",
+                                            jsonEncode([
+                                              {
+                                                "backuplink":
+                                                backuplink,
+                                                "backupbody":
+                                                backupbody
+                                              }
+                                            ]));
+                                      } else {
+                                        // print("adder");
+                                        String? data =
+                                        prefs.getString(
+                                            "backuplinklist");
+                                        List DecodeUser =
+                                        jsonDecode(data!);
+                                        DecodeUser.add({
+                                          "backuplink": backuplink,
+                                          "backupbody": backupbody
+                                        });
+                                        prefs.setString(
+                                            "backuplinklist",
+                                            jsonEncode(DecodeUser));
+                                      }
+                                      print(json.decode(
+                                          prefs.getString(
+                                              "backuplinklist")!));
                                     }
+                                    else {
+                                      print("online");
+                                      // print(IDControllers[index].text);
+                                      if (IDControllers[index].text ==
+                                          "0") {
+                                        // print(listdata[index]['id']);
+                                        print("added");
+                                        AddGEBList(index);
+                                      } else {
+                                        print("updated");
+                                        print(GEBIDControllers[index].text);
+                                        UpdateGEBList(index,
+                                            IDControllers[index].text);
+                                      }
+                                    }
+
                                   },
                                   style: ButtonStyle(
                                       backgroundColor:
@@ -558,7 +702,7 @@ class _UploadGEBState extends State<UploadGEB>
                                     crossAxisAlignment:
                                     CrossAxisAlignment.center,
                                     children: [
-                                      Text(" Sumbit  ",
+                                      Text(" Submit  ",
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontFamily:

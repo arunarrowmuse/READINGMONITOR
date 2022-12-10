@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,6 +91,10 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
   late SharedPreferences prefs;
   String? tokenvalue;
 
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -109,7 +116,35 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
   void initState() {
     super.initState();
     FetchFlueSteamList();
+    getconnectivity();
   }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  getconnectivity() => subscription = Connectivity()
+          .onConnectivityChanged
+          .listen((ConnectivityResult result) async {
+        isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        if (!isDeviceConnected && isAlertSet == false) {
+          Constants.showtoast("No internet Connection");
+          print("You are Offline!");
+          setState(() {
+            isAlertSet = true;
+          });
+        } else {
+          print("You are Online!");
+          tokenvalue = prefs.getString("token");
+          String? data = prefs.getString("backuplinklist");
+          Utils(context).backuptoserver(tokenvalue!, data!);
+          prefs.setString("backuplinklist", jsonEncode([]));
+          print("prefs.getString");
+          print(prefs.getString("backuplinklist"));
+        }
+      });
 
   void FetchFlueSteamList() async {
     ValueControllers.clear();
@@ -411,8 +446,18 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
                         padding: const EdgeInsets.only(right: 15.0),
                         // width: 100,
                         child: ElevatedButton(
-                          onPressed: () {
-                            AddUpdateFlueSteamList();
+                          onPressed: () async {
+                            setState(() => isAlertSet = false);
+                            isDeviceConnected =
+                                await InternetConnectionChecker().hasConnection;
+                            if (!isDeviceConnected) {
+                              print("offline");
+                              Utils(context).Youareoffline(context);
+                            } else {
+                              print("online");
+                              AddUpdateFlueSteamList();
+                            }
+
                           },
                           style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(
@@ -420,7 +465,7 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(" Sumbit All    ",
+                              Text(" Submit All    ",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontFamily: Constants.popins,
@@ -506,20 +551,119 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
                                                 right: 15.0),
                                             // width: 100,
                                             child: ElevatedButton(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 if (_key.currentState!
                                                     .validate()) {
                                                   _key.currentState!.save();
                                                   // Utils(context).startLoading();
-                                                  if (IDControllers[index]
-                                                          .text ==
-                                                      "0") {
-                                                    AddFlueSteamList(index);
-                                                  } else {
-                                                    UpdateFlueSteamList(
-                                                        index,
-                                                        IDControllers[index]
-                                                            .text);
+                                                  print("im hereeeee");
+                                                  var backupbody;
+                                                  var backuplink;
+                                                  setState(
+                                                      () => isAlertSet = false);
+                                                  isDeviceConnected =
+                                                      await InternetConnectionChecker()
+                                                          .hasConnection;
+                                                  if (!isDeviceConnected) {
+                                                    String value = "0";
+                                                    String temp = "0";
+                                                    if (ValueControllers[index]
+                                                            .text !=
+                                                        "") {
+                                                      value = ValueControllers[
+                                                              index]
+                                                          .text;
+                                                    }
+                                                    if (TempControllers[index]
+                                                            .text !=
+                                                        "") {
+                                                      temp =
+                                                          TempControllers[index]
+                                                              .text;
+                                                    }
+                                                    // print("offline");
+                                                    Constants.showtoast(
+                                                        "No internet, Saving data offline.");
+                                                    // setState(() =>
+                                                    //     isAlertSet = true);
+                                                    if (IDControllers[index]
+                                                            .text ==
+                                                        "0") {
+                                                      // print('add backup');
+                                                      backupbody =
+                                                          <String, String>{
+                                                        "date": selectedDate
+                                                            .toString()
+                                                            .split(" ")[0],
+                                                        "machine_id":
+                                                            listdata[index]
+                                                                    ["id"]
+                                                                .toString(),
+                                                        "value": value,
+                                                        "temperature": temp
+                                                      };
+                                                      backuplink =
+                                                          "${Constants.weblink}FlueGasSteamBoilerReportUploadAdd";
+                                                    } else {
+                                                      // print('update backup');
+                                                      backupbody =
+                                                          <String, String>{
+                                                        '_method': "PUT",
+                                                        "value": value,
+                                                        "temperature": temp
+                                                      };
+                                                      backuplink =
+                                                          "${Constants.weblink}FlueGasSteamBoilerReportUploadUpdate/${IDControllers[index].text}";
+                                                    }
+                                                    prefs.getString(
+                                                        "backuplinklist");
+                                                    if (prefs.getString(
+                                                            "backuplinklist") ==
+                                                        null) {
+                                                      // print("called");
+                                                      prefs.setString(
+                                                          "backuplinklist",
+                                                          jsonEncode([
+                                                            {
+                                                              "backuplink":
+                                                                  backuplink,
+                                                              "backupbody":
+                                                                  backupbody
+                                                            }
+                                                          ]));
+                                                    } else {
+                                                      // print("adder");
+                                                      String? data =
+                                                          prefs.getString(
+                                                              "backuplinklist");
+                                                      List DecodeUser =
+                                                          jsonDecode(data!);
+                                                      DecodeUser.add({
+                                                        "backuplink":
+                                                            backuplink,
+                                                        "backupbody": backupbody
+                                                      });
+                                                      prefs.setString(
+                                                          "backuplinklist",
+                                                          jsonEncode(
+                                                              DecodeUser));
+                                                    }
+                                                    print(json.decode(
+                                                        prefs.getString(
+                                                            "backuplinklist")!));
+                                                  }
+                                                  else {
+                                                    print("online");
+                                                    if (IDControllers[index]
+                                                            .text ==
+                                                        "0") {
+                                                      AddFlueSteamList(index);
+                                                    } else {
+                                                      UpdateFlueSteamList(
+                                                          index,
+                                                          IDControllers[index]
+                                                              .text);
+                                                    }
                                                   }
                                                 }
                                               },
@@ -532,7 +676,7 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
                                                 children: [
-                                                  Text(" Sumbit  ",
+                                                  Text(" Submit  ",
                                                       style: TextStyle(
                                                           color: Colors.white,
                                                           fontFamily:
@@ -762,6 +906,11 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
   late SharedPreferences prefs;
   String? tokenvalue;
 
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
+
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -783,7 +932,35 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
   void initState() {
     super.initState();
     FetchFlueThermoList();
+    getconnectivity();
   }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  getconnectivity() => subscription = Connectivity()
+      .onConnectivityChanged
+      .listen((ConnectivityResult result) async {
+    isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    if (!isDeviceConnected && isAlertSet == false) {
+      Constants.showtoast("No internet Connection");
+      print("You are Offline!");
+      setState(() {
+        isAlertSet = true;
+      });
+    } else {
+      print("You are Online!");
+      tokenvalue = prefs.getString("token");
+      String? data = prefs.getString("backuplinklist");
+      Utils(context).backuptoserver(tokenvalue!, data!);
+      prefs.setString("backuplinklist", jsonEncode([]));
+      print("prefs.getString");
+      print(prefs.getString("backuplinklist"));
+    }
+  });
 
   void FetchFlueThermoList() async {
     ValueControllers.clear();
@@ -944,7 +1121,7 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
     Utils(context).startLoading();
     for (int i = 0; i < IDControllers.length; i++) {
       if (IDControllers[i].text.toString() == "0") {
-        if (ValueControllers[i].text != "" || TempControllers[i].text != ""){
+        if (ValueControllers[i].text != "" || TempControllers[i].text != "") {
           print('added');
           String value = "0";
           String temp = "0";
@@ -991,12 +1168,14 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
           temp = TempControllers[i].text;
         }
         final response = await http.put(
-          Uri.parse('${Constants.weblink}FlueGasThermoPackReportUploadUpdate/${IDControllers[i].text}'),
+          Uri.parse(
+              '${Constants.weblink}FlueGasThermoPackReportUploadUpdate/${IDControllers[i].text}'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
             'Authorization': 'Bearer $tokenvalue',
           },
-          body: jsonEncode(<String, String>{"value": value, "temperature": temp}),
+          body:
+              jsonEncode(<String, String>{"value": value, "temperature": temp}),
         );
         if (response.statusCode == 200) {
           // data = jsonDecode(response.body);
@@ -1087,8 +1266,18 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
                         padding: const EdgeInsets.only(right: 15.0),
                         // width: 100,
                         child: ElevatedButton(
-                          onPressed: () {
-                            AddUpdateFlueThermoList();
+                          onPressed: () async {
+                            setState(() => isAlertSet = false);
+                            isDeviceConnected =
+                                await InternetConnectionChecker().hasConnection;
+                            if (!isDeviceConnected) {
+                              print("offline");
+                              Utils(context).Youareoffline(context);
+                            } else {
+                              print("online");
+                              AddUpdateFlueThermoList();
+                            }
+
                           },
                           style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(
@@ -1096,7 +1285,7 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(" Sumbit All    ",
+                              Text(" Submit All    ",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontFamily: Constants.popins,
@@ -1182,21 +1371,117 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
                                                 right: 15.0),
                                             // width: 100,
                                             child: ElevatedButton(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 if (_key.currentState!
                                                     .validate()) {
                                                   _key.currentState!.save();
                                                   // Utils(context).startLoading();
-
-                                                  if (IDControllers[index]
-                                                          .text ==
-                                                      "0") {
-                                                    AddFlueThermoList(index);
+                                                  print("im hereeeee");
+                                                  var backupbody;
+                                                  var backuplink;
+                                                  setState(
+                                                          () => isAlertSet = false);
+                                                  isDeviceConnected =
+                                                      await InternetConnectionChecker()
+                                                      .hasConnection;
+                                                  if (!isDeviceConnected) {
+                                                    String value = "0";
+                                                    String temp = "0";
+                                                    if (ValueControllers[index]
+                                                        .text !=
+                                                        "") {
+                                                      value = ValueControllers[
+                                                      index]
+                                                          .text;
+                                                    }
+                                                    if (TempControllers[index]
+                                                        .text !=
+                                                        "") {
+                                                      temp =
+                                                          TempControllers[index]
+                                                              .text;
+                                                    }
+                                                    // print("offline");
+                                                    Constants.showtoast(
+                                                        "No internet, Saving data offline.");
+                                                    // setState(() =>
+                                                    // isAlertSet = true);
+                                                    if (IDControllers[index]
+                                                        .text ==
+                                                        "0") {
+                                                      // print('add backup');
+                                                      backupbody =
+                                                      <String, String>{
+                                                        "date": selectedDate
+                                                            .toString()
+                                                            .split(" ")[0],
+                                                        "machine_id":
+                                                        listdata[index]
+                                                        ["id"]
+                                                            .toString(),
+                                                        "value": value,
+                                                        "temperature": temp
+                                                      };
+                                                      backuplink =
+                                                      "${Constants.weblink}FlueGasThermoPackReportUploadAdd";
+                                                    } else {
+                                                      // print('update backup');
+                                                      backupbody =
+                                                      <String, String>{
+                                                        '_method': "PUT",
+                                                        "value": value,
+                                                        "temperature": temp
+                                                      };
+                                                      backuplink =
+                                                      "${Constants.weblink}FlueGasThermoPackReportUploadUpdate/${IDControllers[index].text}";
+                                                    }
+                                                    prefs.getString(
+                                                        "backuplinklist");
+                                                    if (prefs.getString(
+                                                        "backuplinklist") ==
+                                                        null) {
+                                                      // print("called");
+                                                      prefs.setString(
+                                                          "backuplinklist",
+                                                          jsonEncode([
+                                                            {
+                                                              "backuplink":
+                                                              backuplink,
+                                                              "backupbody":
+                                                              backupbody
+                                                            }
+                                                          ]));
+                                                    } else {
+                                                      // print("adder");
+                                                      String? data =
+                                                      prefs.getString(
+                                                          "backuplinklist");
+                                                      List DecodeUser =
+                                                      jsonDecode(data!);
+                                                      DecodeUser.add({
+                                                        "backuplink":
+                                                        backuplink,
+                                                        "backupbody": backupbody
+                                                      });
+                                                      prefs.setString(
+                                                          "backuplinklist",
+                                                          jsonEncode(
+                                                              DecodeUser));
+                                                    }
+                                                    print(json.decode(
+                                                        prefs.getString(
+                                                            "backuplinklist")!));
                                                   } else {
-                                                    UpdateFlueThermoList(
-                                                        index,
-                                                        IDControllers[index]
-                                                            .text);
+                                                    if (IDControllers[index]
+                                                        .text ==
+                                                        "0") {
+                                                      AddFlueThermoList(index);
+                                                    } else {
+                                                      UpdateFlueThermoList(
+                                                          index,
+                                                          IDControllers[index]
+                                                              .text);
+                                                    }
                                                   }
                                                 }
                                               },
@@ -1209,7 +1494,7 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
                                                 children: [
-                                                  Text(" Sumbit  ",
+                                                  Text(" Submit  ",
                                                       style: TextStyle(
                                                           color: Colors.white,
                                                           fontFamily:

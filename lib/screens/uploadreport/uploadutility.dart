@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,8 +27,11 @@ class _UploadUtilityState extends State<UploadUtility>
   var maindata;
   late SharedPreferences prefs;
   String? tokenvalue;
-
   DateTime selectedDate = DateTime.now();
+
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -47,7 +53,35 @@ class _UploadUtilityState extends State<UploadUtility>
   void initState() {
     super.initState();
     FetchUtilityList();
+    getconnectivity();
   }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  getconnectivity() => subscription = Connectivity()
+          .onConnectivityChanged
+          .listen((ConnectivityResult result) async {
+        isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        if (!isDeviceConnected && isAlertSet == false) {
+          Constants.showtoast("No internet Connection");
+          print("You are Offline!");
+          setState(() {
+            isAlertSet = true;
+          });
+        } else {
+          print("You are Online!");
+          tokenvalue = prefs.getString("token");
+          String? data = prefs.getString("backuplinklist");
+          Utils(context).backuptoserver(tokenvalue!, data!);
+          prefs.setString("backuplinklist", jsonEncode([]));
+          print("prefs.getString");
+          print(prefs.getString("backuplinklist"));
+        }
+      });
 
   void FetchUtilityList() async {
     EMControllers.clear();
@@ -248,7 +282,7 @@ class _UploadUtilityState extends State<UploadUtility>
             },
             body: jsonEncode(<String, String>{
               "uitility_categories_id":
-              subcatdata[i]["uitility_categories_id"].toString(),
+                  subcatdata[i]["uitility_categories_id"].toString(),
               "uitility_subcategories_id": subcatdata[i]["id"].toString(),
               "date": selectedDate.toString().split(" ")[0],
               "em": emvalue,
@@ -267,8 +301,7 @@ class _UploadUtilityState extends State<UploadUtility>
         } else {
           print("skipped");
         }
-      }
-      else {
+      } else {
         print("update data");
         String emvalue;
         String hmvalue;
@@ -283,7 +316,8 @@ class _UploadUtilityState extends State<UploadUtility>
           hmvalue = HMControllers[i].text;
         }
         final response = await http.put(
-          Uri.parse('${Constants.weblink}GetUtiltiReportUploadQueryUpdated/${IDControllers[i].text}'),
+          Uri.parse(
+              '${Constants.weblink}GetUtiltiReportUploadQueryUpdated/${IDControllers[i].text}'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
             'Authorization': 'Bearer $tokenvalue',
@@ -297,7 +331,6 @@ class _UploadUtilityState extends State<UploadUtility>
           // print(response.statusCode);
           // print(response.body);
           Constants.showtoast("Error Updating Data.");
-
         }
       }
     }
@@ -371,8 +404,17 @@ class _UploadUtilityState extends State<UploadUtility>
                       padding: const EdgeInsets.only(right: 15.0),
                       // width: 100,
                       child: ElevatedButton(
-                        onPressed: () {
-                          AddUpdateUtilityList();
+                        onPressed: () async {
+                          setState(() => isAlertSet = false);
+                          isDeviceConnected =
+                              await InternetConnectionChecker().hasConnection;
+                          if (!isDeviceConnected) {
+                            print("offline");
+                            Utils(context).Youareoffline(context);
+                          } else {
+                            print("online");
+                            AddUpdateUtilityList();
+                          }
                         },
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -380,7 +422,7 @@ class _UploadUtilityState extends State<UploadUtility>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(" Sumbit All    ",
+                            Text(" Submit All    ",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: Constants.popins,
@@ -477,14 +519,101 @@ class _UploadUtilityState extends State<UploadUtility>
                                           const EdgeInsets.only(right: 15.0),
                                       // width: 100,
                                       child: ElevatedButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           // Utils(context).startLoading();
-                                          if (IDControllers[index].text ==
-                                              "0") {
-                                            AddUtilityList(index);
+                                          var backupbody;
+                                          var backuplink;
+                                          setState(() => isAlertSet = false);
+                                          isDeviceConnected =
+                                              await InternetConnectionChecker()
+                                                  .hasConnection;
+                                          if (!isDeviceConnected) {
+                                            // print("offline");
+                                            Constants.showtoast(
+                                                "No internet, Saving data offline.");
+                                            // setState(() => isAlertSet = false);
+                                            String emvalue;
+                                            String hmvalue;
+                                            if (EMControllers[index].text ==
+                                                "") {
+                                              emvalue = "0";
+                                            } else {
+                                              emvalue =
+                                                  EMControllers[index].text;
+                                            }
+                                            if (HMControllers[index].text ==
+                                                "") {
+                                              hmvalue = "0";
+                                            } else {
+                                              hmvalue =
+                                                  HMControllers[index].text;
+                                            }
+                                            if (IDControllers[index].text ==
+                                                "0") {
+                                              // print('add backup');
+                                              backupbody = <String, String>{
+                                                "uitility_categories_id":
+                                                    subcatdata[index][
+                                                            "uitility_categories_id"]
+                                                        .toString(),
+                                                "uitility_subcategories_id":
+                                                    subcatdata[index]["id"]
+                                                        .toString(),
+                                                "date": selectedDate
+                                                    .toString()
+                                                    .split(" ")[0],
+                                                "em": emvalue,
+                                                "hm": hmvalue
+                                              };
+                                              backuplink =
+                                                  "${Constants.weblink}GetUtiltiReportUploadQueryAdd";
+                                            } else {
+                                              // print('update backup');
+                                              backupbody = <String, String>{
+                                                '_method': "PUT",
+                                                "em": emvalue,
+                                                "hm": hmvalue
+                                              };
+                                              backuplink =
+                                                  "${Constants.weblink}GetUtiltiReportUploadQueryUpdated/${IDControllers[index].text}";
+                                            }
+                                            prefs.getString("backuplinklist");
+                                            if (prefs.getString(
+                                                    "backuplinklist") ==
+                                                null) {
+                                              // print("called");
+                                              prefs.setString(
+                                                  "backuplinklist",
+                                                  jsonEncode([
+                                                    {
+                                                      "backuplink": backuplink,
+                                                      "backupbody": backupbody
+                                                    }
+                                                  ]));
+                                            } else {
+                                              // print("adder");
+                                              String? data = prefs
+                                                  .getString("backuplinklist");
+                                              List DecodeUser =
+                                                  jsonDecode(data!);
+                                              DecodeUser.add({
+                                                "backuplink": backuplink,
+                                                "backupbody": backupbody
+                                              });
+                                              prefs.setString("backuplinklist",
+                                                  jsonEncode(DecodeUser));
+                                            }
+                                            print(json.decode(prefs
+                                                .getString("backuplinklist")!));
                                           } else {
-                                            UpdateUtilityList(index,
-                                                IDControllers[index].text);
+                                            print("online");
+                                            if (IDControllers[index].text ==
+                                                "0") {
+                                              AddUtilityList(index);
+                                            } else {
+                                              UpdateUtilityList(index,
+                                                  IDControllers[index].text);
+                                            }
                                           }
                                         },
                                         style: ButtonStyle(
@@ -496,7 +625,7 @@ class _UploadUtilityState extends State<UploadUtility>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            Text(" Sumbit  ",
+                                            Text(" Submit  ",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontFamily:

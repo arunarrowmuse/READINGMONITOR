@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,8 +29,11 @@ class _UploadMachinesState extends State<UploadMachines>
   var maindata;
   late SharedPreferences prefs;
   String? tokenvalue;
-
   DateTime selectedDate = DateTime.now();
+
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -51,7 +57,34 @@ class _UploadMachinesState extends State<UploadMachines>
   void initState() {
     super.initState();
     FetchMachinesList();
+    getconnectivity();
   }
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  getconnectivity() => subscription = Connectivity()
+      .onConnectivityChanged
+      .listen((ConnectivityResult result) async {
+    isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    if (!isDeviceConnected && isAlertSet == false) {
+      Constants.showtoast("No internet Connection");
+      print("You are Offline!");
+      setState(() {
+        isAlertSet = true;
+      });
+    } else {
+      print("You are Online!");
+      tokenvalue = prefs.getString("token");
+      String? data = prefs.getString("backuplinklist");
+      Utils(context).backuptoserver(tokenvalue!, data!);
+      prefs.setString("backuplinklist", jsonEncode([]));
+      print("prefs.getString");
+      print(prefs.getString("backuplinklist"));
+    }
+  });
 
   void FetchMachinesList() async {
     EMControllers.clear();
@@ -428,14 +461,18 @@ class _UploadMachinesState extends State<UploadMachines>
                       padding: const EdgeInsets.only(right: 15.0),
                       // width: 100,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Utils(context).startLoading();
-                          // if (uploaddata.length == 0) {
-                          //   AddUtilityList();
-                          // } else {
-                          //   UpdateUtilityList();
-                          // }
-                          AddUpdateMachinesList();
+                        onPressed: () async {
+                          setState(() => isAlertSet = false);
+                          isDeviceConnected =
+                              await InternetConnectionChecker().hasConnection;
+                          if (!isDeviceConnected) {
+                            print("offline");
+                            Utils(context).Youareoffline(context);
+                          } else {
+                            print("online");
+                            AddUpdateMachinesList();
+                          }
+
                         },
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -443,7 +480,7 @@ class _UploadMachinesState extends State<UploadMachines>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(" Sumbit All    ",
+                            Text(" Submit All    ",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: Constants.popins,
@@ -540,15 +577,109 @@ class _UploadMachinesState extends State<UploadMachines>
                                           const EdgeInsets.only(right: 15.0),
                                       // width: 100,
                                       child: ElevatedButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           // Utils(context).startLoading();
-                                          if (IDControllers[index].text ==
-                                              "0") {
-                                            AddMachinesList(index);
-                                          } else {
-                                            UpdateMachinesList(index,
-                                                IDControllers[index].text);
+                                          var backupbody;
+                                          var backuplink;
+                                          String emvalue = "0";
+                                          String hmvalue = "0";
+                                          String water = "0";
+                                          String batch = "0";
+                                          setState(
+                                                  () => isAlertSet = false);
+                                          isDeviceConnected =
+                                              await InternetConnectionChecker()
+                                              .hasConnection;
+                                          if (!isDeviceConnected) {
+                                            // print("offline");
+                                            Constants.showtoast(
+                                                "No internet, Saving data offline.");
+                                            // setState(
+                                            //         () => isAlertSet = true);
+                                            if (EMControllers[index].text != "") {
+                                              emvalue = EMControllers[index].text;
+                                            }
+                                            if (HMControllers[index].text != "") {
+                                              hmvalue = HMControllers[index].text;
+                                            }
+                                            if (WaterControllers[index].text != "") {
+                                              water = WaterControllers[index].text;
+                                            }
+                                            if (BatchControllers[index].text != "") {
+                                              batch = BatchControllers[index].text;
+                                            }
+                                            if (IDControllers[index].text ==
+                                                "0") {
+                                              // print('add backup');
+                                              backupbody = <String, String>{
+                                                "categories_id": subcatdata[index]['categories_id'].toString(),
+                                                "sub_categories_id": subcatdata[index]['id'].toString(),
+                                                "date": selectedDate.toString().split(" ")[0],
+                                                "water": water,
+                                                "batch": batch,
+                                                "em": emvalue,
+                                                "hm": hmvalue,
+                                              };
+                                              backuplink =
+                                              "${Constants.weblink}MachineReportUpload";
+                                            } else {
+                                              // print('update backup');
+                                              backupbody = <String, String>{
+                                                '_method': "PUT",
+                                                "water": water,
+                                                "batch": batch,
+                                                "em": emvalue,
+                                                "hm": hmvalue,
+                                              };
+                                              backuplink =
+                                              "${Constants.weblink}MachineReportUploadUpdated/${IDControllers[index].text}";
+                                            }
+                                            prefs.getString(
+                                                "backuplinklist");
+                                            if (prefs.getString(
+                                                "backuplinklist") ==
+                                                null) {
+                                              // print("called");
+                                              prefs.setString(
+                                                  "backuplinklist",
+                                                  jsonEncode([
+                                                    {
+                                                      "backuplink":
+                                                      backuplink,
+                                                      "backupbody":
+                                                      backupbody
+                                                    }
+                                                  ]));
+                                            } else {
+                                              // print("adder");
+                                              String? data =
+                                              prefs.getString(
+                                                  "backuplinklist");
+                                              List DecodeUser =
+                                              jsonDecode(data!);
+                                              DecodeUser.add({
+                                                "backuplink": backuplink,
+                                                "backupbody": backupbody
+                                              });
+                                              prefs.setString(
+                                                  "backuplinklist",
+                                                  jsonEncode(DecodeUser));
+                                            }
+                                            print(json.decode(
+                                                prefs.getString(
+                                                    "backuplinklist")!));
                                           }
+                                          else {
+                                            print("online");
+                                            if (IDControllers[index].text ==
+                                                "0") {
+                                              AddMachinesList(index);
+                                            } else {
+                                              UpdateMachinesList(index,
+                                                  IDControllers[index].text);
+                                            }
+                                          }
+
                                         },
                                         style: ButtonStyle(
                                             backgroundColor:
@@ -559,7 +690,7 @@ class _UploadMachinesState extends State<UploadMachines>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            Text(" Sumbit  ",
+                                            Text(" Submit  ",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontFamily:

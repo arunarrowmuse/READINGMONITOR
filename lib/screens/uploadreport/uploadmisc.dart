@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../constants.dart';
 
 class UploadMisc extends StatefulWidget {
@@ -25,6 +29,11 @@ class _UploadMiscState extends State<UploadMisc>
   late SharedPreferences prefs;
   String? tokenvalue;
 
+  // var listener;
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -45,7 +54,38 @@ class _UploadMiscState extends State<UploadMisc>
   void initState() {
     super.initState();
     FetchMiscList();
+    getconnectivity();
+    // checkinternet();
   }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+
+  }
+
+
+  getconnectivity() => subscription = Connectivity()
+          .onConnectivityChanged
+          .listen((ConnectivityResult result) async {
+        isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        if (!isDeviceConnected && isAlertSet == false) {
+          Constants.showtoast("No internet Connection");
+          print("You are Offline!");
+          setState(() {
+            isAlertSet = true;
+          });
+        } else {
+          print("You are Online!");
+          tokenvalue = prefs.getString("token");
+          String? data = prefs.getString("backuplinklist");
+          Utils(context).backuptoserver(tokenvalue!, data!);
+          prefs.setString("backuplinklist", jsonEncode([]));
+          print("prefs.getString");
+          print(prefs.getString("backuplinklist"));
+        }
+      });
 
   void FetchMiscList() async {
     ValueControllers.clear();
@@ -125,9 +165,6 @@ class _UploadMiscState extends State<UploadMisc>
 
   void AddMiscList(int i) async {
     Utils(context).startLoading();
-    // print("ValueUnit.length");
-    // print(ValueUnit.length);
-    // for (int i = 0; i < listdata.length; i++) {
     String value = "0";
     if (ValueControllers[i].text != "") {
       value = ValueControllers[i].text;
@@ -156,7 +193,6 @@ class _UploadMiscState extends State<UploadMisc>
       Constants.showtoast("Error Updating Data.");
       Utils(context).stopLoading();
     }
-    // }
     FetchMiscList();
   }
 
@@ -177,6 +213,7 @@ class _UploadMiscState extends State<UploadMisc>
         "unit": value,
       }),
     );
+
     if (response.statusCode == 200) {
       // data = jsonDecode(response.body);
       // ValueUnit[i].clear();
@@ -184,23 +221,22 @@ class _UploadMiscState extends State<UploadMisc>
       // Constants.showtoast("Report Updated!");
       Utils(context).stopLoading();
       // }
-      // Constants.showtoast("Report Updated!");
+      Constants.showtoast("Report Updated!");
     } else {
       print(response.statusCode);
       print(response.body);
       Constants.showtoast("Error Updating Data.");
       Utils(context).stopLoading();
     }
-    Utils(context).stopLoading();
+    // Utils(context).stopLoading();
     FetchMiscList();
   }
-
 
   void AddUpdateMiscList() async {
     Utils(context).startLoading();
     for (int i = 0; i < IDControllers.length; i++) {
       if (IDControllers[i].text.toString() == "0") {
-        if (ValueControllers[i].text != ""){
+        if (ValueControllers[i].text != "") {
           print("added");
           String value = "0";
           if (ValueControllers[i].text != "") {
@@ -223,7 +259,7 @@ class _UploadMiscState extends State<UploadMisc>
           } else {
             Constants.showtoast("Error Updating Data.");
           }
-        }else{
+        } else {
           print("skipped");
         }
       } else {
@@ -233,7 +269,8 @@ class _UploadMiscState extends State<UploadMisc>
           value = ValueControllers[i].text;
         }
         final response = await http.put(
-          Uri.parse('${Constants.weblink}MiscReportUploadUpdate/${IDControllers[i].text}'),
+          Uri.parse(
+              '${Constants.weblink}MiscReportUploadUpdate/${IDControllers[i].text}'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
             'Authorization': 'Bearer $tokenvalue',
@@ -325,8 +362,18 @@ class _UploadMiscState extends State<UploadMisc>
                       padding: const EdgeInsets.only(right: 15.0),
                       // width: 100,
                       child: ElevatedButton(
-                        onPressed: () {
-                          AddUpdateMiscList();
+                        onPressed: () async {
+                          setState(() => isAlertSet = false);
+                          isDeviceConnected =
+                              await InternetConnectionChecker().hasConnection;
+                          if (!isDeviceConnected) {
+                            print("offline");
+                            Utils(context).Youareoffline(context);
+                          } else {
+                            print("online");
+                              AddUpdateMiscList();
+                          }
+
                         },
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -334,7 +381,7 @@ class _UploadMiscState extends State<UploadMisc>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(" Sumbit All    ",
+                            Text(" Submit All    ",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: Constants.popins,
@@ -407,15 +454,100 @@ class _UploadMiscState extends State<UploadMisc>
                                               right: 15.0),
                                           // width: 100,
                                           child: ElevatedButton(
-                                            onPressed: () {
-                                              // Utils(context).startLoading();
-                                              if (IDControllers[index].text ==
-                                                  "0") {
-                                                AddMiscList(index);
-                                              } else {
-                                                UpdateMiscList(index,
-                                                    IDControllers[index].text);
+                                            onPressed: () async {
+                                              var backupbody;
+                                              var backuplink;
+                                              setState(
+                                                  () => isAlertSet = false);
+                                              isDeviceConnected =
+                                                  await InternetConnectionChecker()
+                                                      .hasConnection;
+                                              if (!isDeviceConnected) {
+                                                // print("offline");
+                                                Constants.showtoast(
+                                                    "No internet, Saving data offline.");
+                                                // setState(
+                                                //     () => isAlertSet = true);
+                                                if (IDControllers[index].text ==
+                                                    "0") {
+                                                  // print('add backup');
+                                                  backupbody = <String, String>{
+                                                    "unit":
+                                                        ValueControllers[index]
+                                                            .text,
+                                                    "date": selectedDate
+                                                        .toString()
+                                                        .split(" ")[0],
+                                                    "machine_id":
+                                                        listdata[index]["id"]
+                                                            .toString(),
+                                                    "machine_name":
+                                                        listdata[index]
+                                                                ["machine_name"]
+                                                            .toString()
+                                                  };
+                                                  backuplink =
+                                                      "${Constants.weblink}MiscReportUploadAdd";
+                                                } else
+                                                {
+                                                  // print('update backup');
+                                                  backupbody = <String, String>{
+                                                    '_method': "PUT",
+                                                    "unit":
+                                                        ValueControllers[index]
+                                                            .text
+                                                  };
+                                                  backuplink =
+                                                      "${Constants.weblink}MiscReportUploadUpdate/${IDControllers[index].text}";
+                                                }
+                                                prefs.getString(
+                                                    "backuplinklist");
+                                                if (prefs.getString(
+                                                        "backuplinklist") ==
+                                                    null) {
+                                                  // print("called");
+                                                  prefs.setString(
+                                                      "backuplinklist",
+                                                      jsonEncode([
+                                                        {
+                                                          "backuplink":
+                                                              backuplink,
+                                                          "backupbody":
+                                                              backupbody
+                                                        }
+                                                      ]));
+                                                } else {
+                                                  // print("adder");
+                                                  String? data =
+                                                      prefs.getString(
+                                                          "backuplinklist");
+                                                  List DecodeUser =
+                                                      jsonDecode(data!);
+                                                  DecodeUser.add({
+                                                    "backuplink": backuplink,
+                                                    "backupbody": backupbody
+                                                  });
+                                                  prefs.setString(
+                                                      "backuplinklist",
+                                                      jsonEncode(DecodeUser));
+                                                }
+                                                print(json.decode(
+                                                    prefs.getString(
+                                                        "backuplinklist")!));
                                               }
+                                              else {
+                                                print("online");
+                                                if (IDControllers[index].text ==
+                                                    "0") {
+                                                  AddMiscList(index);
+                                                } else {
+                                                  UpdateMiscList(
+                                                      index,
+                                                      IDControllers[index]
+                                                          .text);
+                                                }
+                                              }
+
                                             },
                                             style: ButtonStyle(
                                                 backgroundColor:
@@ -426,7 +558,7 @@ class _UploadMiscState extends State<UploadMisc>
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                Text(" Sumbit  ",
+                                                Text(" Submit  ",
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontFamily:
@@ -555,15 +687,129 @@ class _UploadMiscState extends State<UploadMisc>
                                               right: 15.0),
                                           // width: 100,
                                           child: ElevatedButton(
-                                            onPressed: () {
-                                              // Utils(context).startLoading();
-                                              if (IDControllers[index].text ==
-                                                  "0") {
-                                                AddMiscList(index);
+                                            onPressed: () async {
+                                              var backupbody;
+                                              var backuplink;
+                                              setState(
+                                                  () => isAlertSet = false);
+                                              isDeviceConnected =
+                                                  await InternetConnectionChecker()
+                                                      .hasConnection;
+                                              if (!isDeviceConnected) {
+                                                // print("offline");
+                                                Constants.showtoast(
+                                                    "No internet, Saving data offline.");
+                                                setState(
+                                                    () => isAlertSet = true);
+                                                if (IDControllers[index].text ==
+                                                    "0") {
+                                                  // print('add backup');
+                                                  backupbody = <String, String>{
+                                                    "unit":
+                                                        ValueControllers[index]
+                                                            .text,
+                                                    "date": selectedDate
+                                                        .toString()
+                                                        .split(" ")[0],
+                                                    "machine_id":
+                                                        listdata[index]["id"]
+                                                            .toString(),
+                                                    "machine_name":
+                                                        listdata[index]
+                                                                ["machine_name"]
+                                                            .toString()
+                                                  };
+                                                  backuplink =
+                                                      "${Constants.weblink}MiscReportUploadAdd";
+                                                } else {
+                                                  // print('update backup');
+                                                  backupbody = <String, String>{
+                                                    '_method': "PUT",
+                                                    "unit":
+                                                        ValueControllers[index]
+                                                            .text
+                                                  };
+                                                  backuplink =
+                                                      "${Constants.weblink}MiscReportUploadUpdate/${IDControllers[index].text}";
+                                                }
+                                                prefs.getString(
+                                                    "backuplinklist");
+                                                if (prefs.getString(
+                                                        "backuplinklist") ==
+                                                    null) {
+                                                  // print("called");
+                                                  prefs.setString(
+                                                      "backuplinklist",
+                                                      jsonEncode([
+                                                        {
+                                                          "backuplink":
+                                                              backuplink,
+                                                          "backupbody":
+                                                              backupbody
+                                                        }
+                                                      ]));
+                                                } else {
+                                                  // print("adder");
+                                                  String? data =
+                                                      prefs.getString(
+                                                          "backuplinklist");
+                                                  List DecodeUser =
+                                                      jsonDecode(data!);
+                                                  DecodeUser.add({
+                                                    "backuplink": backuplink,
+                                                    "backupbody": backupbody
+                                                  });
+                                                  prefs.setString(
+                                                      "backuplinklist",
+                                                      jsonEncode(DecodeUser));
+                                                }
+                                                print(json.decode(
+                                                    prefs.getString(
+                                                        "backuplinklist")!));
                                               } else {
-                                                UpdateMiscList(index,
-                                                    IDControllers[index].text);
+                                                print("online");
+                                                if (IDControllers[index].text ==
+                                                    "0") {
+                                                  AddMiscList(index);
+                                                } else {
+                                                  UpdateMiscList(
+                                                      index,
+                                                      IDControllers[index]
+                                                          .text);
+                                                }
                                               }
+                                              // var listener =
+                                              //     InternetConnectionChecker()
+                                              //         .onStatusChange
+                                              //         .listen((status) async {
+                                              //   InternetConnectionChecker()
+                                              //       .checkInterval;
+                                              //   switch (status) {
+                                              // case InternetConnectionStatus
+                                              //     .connected:
+                                              //   print(
+                                              //       'Data connection is available.');
+                                              //   if (IDControllers[index]
+                                              //           .text ==
+                                              //       "0") {
+                                              //     AddMiscList(index);
+                                              //   } else {
+                                              //     UpdateMiscList(
+                                              //         index,
+                                              //         IDControllers[index]
+                                              //             .text);
+                                              //   }
+                                              //   break;
+                                              //   case InternetConnectionStatus
+                                              //       .disconnected:
+                                              //     print(
+                                              //         'You are disconnected from the internet.');
+                                              //     break;
+                                              // }
+                                              // });
+                                              // await Future.delayed(
+                                              //     Duration(seconds: 1));
+                                              // await listener.cancel();
                                             },
                                             style: ButtonStyle(
                                                 backgroundColor:
@@ -574,7 +820,7 @@ class _UploadMiscState extends State<UploadMisc>
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                Text(" Sumbit  ",
+                                                Text(" Submit  ",
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontFamily:

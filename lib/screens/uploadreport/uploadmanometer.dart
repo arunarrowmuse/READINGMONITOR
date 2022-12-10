@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -101,6 +104,11 @@ class _UploadManoSteamState extends State<UploadManoSteam>
   late SharedPreferences prefs;
   String? tokenvalue;
 
+  // var listener;
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -127,7 +135,35 @@ class _UploadManoSteamState extends State<UploadManoSteam>
   void initState() {
     super.initState();
     FetchManoSteamList();
+    getconnectivity();
   }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  getconnectivity() => subscription = Connectivity()
+          .onConnectivityChanged
+          .listen((ConnectivityResult result) async {
+        isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        if (!isDeviceConnected && isAlertSet == false) {
+          Constants.showtoast("No internet Connection");
+          print("You are Offline!");
+          setState(() {
+            isAlertSet = true;
+          });
+        } else {
+          print("You are Online!");
+          tokenvalue = prefs.getString("token");
+          String? data = prefs.getString("backuplinklist");
+          Utils(context).backuptoserver(tokenvalue!, data!);
+          prefs.setString("backuplinklist", jsonEncode([]));
+          print("prefs.getString");
+          print(prefs.getString("backuplinklist"));
+        }
+      });
 
   void FetchManoSteamList() async {
     ValueControllers.clear();
@@ -417,13 +453,118 @@ class _UploadManoSteamState extends State<UploadManoSteam>
                         padding: const EdgeInsets.only(right: 15.0),
                         // width: 100,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (_key.currentState!.validate()) {
                               _key.currentState!.save();
-                              if (uploaddata.length == 0) {
-                                AddManoSteamList();
-                              } else {
-                                UpdateManoSteamList();
+                              print("reached here");
+                              var backupbody;
+                              var backuplink;
+
+                              setState(() => isAlertSet = false);
+                              isDeviceConnected =
+                                  await InternetConnectionChecker()
+                                      .hasConnection;
+                              if (!isDeviceConnected) {
+                                print("offline");
+                                for (int i = 0; i < listdata.length; i++) {
+                                  String value = "0";
+                                  String temp = "0";
+                                  String idf = "0";
+                                  String fd = "0";
+                                  String coal = "0";
+                                  String aphvaluee = "0";
+                                  String aphtempp = "0";
+                                  if (ValueControllers[i].text != "") {
+                                    value = ValueControllers[i].text;
+                                  }
+                                  if (TempControllers[i].text != "") {
+                                    temp = TempControllers[i].text;
+                                  }
+                                  if (idfan.text != "") {
+                                    idf = idfan.text;
+                                  }
+                                  if (fdfan.text != "") {
+                                    fd = fdfan.text;
+                                  }
+                                  if (coalused.text != "") {
+                                    coal = coalused.text;
+                                  }
+                                  if (aphvalue.text != "") {
+                                    aphvaluee = aphvalue.text;
+                                  }
+                                  if (aphtemp.text != "") {
+                                    aphtempp = aphtemp.text;
+                                  }
+                                  Constants.showtoast(
+                                      "No internet, Saving data offline.");
+                                  // setState(() => isAlertSet = true);
+                                  if (IDControllers[i].text == "0") {
+                                    // print('add backup');
+                                    backupbody = <String, String>{
+                                      "date":
+                                          selectedDate.toString().split(" ")[0],
+                                      "machine_id":
+                                          listdata[i]["id"].toString(),
+                                      "id_fan": idf,
+                                      "fd_fan": fd,
+                                      "coal_used": coal,
+                                      "aph_value": aphvaluee,
+                                      "aph_temperature": aphtempp,
+                                      "value": value,
+                                      "temperature": temp,
+                                    };
+                                    backuplink =
+                                        "${Constants.weblink}ManoMeterSteamBoilerReportUploadAdd";
+                                  } else {
+                                    // print('update backup');
+                                    backupbody = <String, String>{
+                                      '_method': "PUT",
+                                      "id_fan": idf,
+                                      "fd_fan": fd,
+                                      "coal_used": coal,
+                                      "aph_value": aphvaluee,
+                                      "aph_temperature": aphtempp,
+                                      "value": value,
+                                      "temperature": temp
+                                    };
+                                    backuplink =
+                                        "${Constants.weblink}ManoMeterSteamBoilerReportUploadUpdate/${uploaddata[i]["id"]}";
+                                  }
+                                  prefs.getString("backuplinklist");
+                                  if (prefs.getString("backuplinklist") ==
+                                      null) {
+                                    // print("called");
+                                    prefs.setString(
+                                        "backuplinklist",
+                                        jsonEncode([
+                                          {
+                                            "backuplink": backuplink,
+                                            "backupbody": backupbody
+                                          }
+                                        ]));
+                                  } else {
+                                    // print("adder");
+                                    String? data =
+                                        prefs.getString("backuplinklist");
+                                    List DecodeUser = jsonDecode(data!);
+                                    DecodeUser.add({
+                                      "backuplink": backuplink,
+                                      "backupbody": backupbody
+                                    });
+                                    prefs.setString("backuplinklist",
+                                        jsonEncode(DecodeUser));
+                                  }
+                                  print(json.decode(
+                                      prefs.getString("backuplinklist")!));
+                                }
+                              }
+                              else {
+                                print("online");
+                                if (uploaddata.length == 0) {
+                                  AddManoSteamList();
+                                } else {
+                                  UpdateManoSteamList();
+                                }
                               }
                             }
                           },
@@ -433,7 +574,7 @@ class _UploadManoSteamState extends State<UploadManoSteam>
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(" Sumbit  ",
+                              Text(" Submit  ",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontFamily: Constants.popins,
@@ -1069,6 +1210,10 @@ class _UploadManoThermoState extends State<UploadManoThermo>
   late SharedPreferences prefs;
   String? tokenvalue;
 
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -1095,8 +1240,34 @@ class _UploadManoThermoState extends State<UploadManoThermo>
   void initState() {
     super.initState();
     FetchManoThermoList();
+    getconnectivity();
+  }
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
+  getconnectivity() => subscription = Connectivity()
+      .onConnectivityChanged
+      .listen((ConnectivityResult result) async {
+    isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    if (!isDeviceConnected && isAlertSet == false) {
+      Constants.showtoast("No internet Connection");
+      print("You are Offline!");
+      setState(() {
+        isAlertSet = true;
+      });
+    } else {
+      print("You are Online!");
+      tokenvalue = prefs.getString("token");
+      String? data = prefs.getString("backuplinklist");
+      Utils(context).backuptoserver(tokenvalue!, data!);
+      prefs.setString("backuplinklist", jsonEncode([]));
+      print("prefs.getString");
+      print(prefs.getString("backuplinklist"));
+    }
+  });
   void FetchManoThermoList() async {
     ValueControllers.clear();
     TempControllers.clear();
@@ -1314,7 +1485,6 @@ class _UploadManoThermoState extends State<UploadManoThermo>
     FetchManoThermoList();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
@@ -1384,13 +1554,118 @@ class _UploadManoThermoState extends State<UploadManoThermo>
                         padding: const EdgeInsets.only(right: 15.0),
                         // width: 100,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (_key.currentState!.validate()) {
                               _key.currentState!.save();
-                              if (uploaddata.length == 0) {
-                                AddManoThermoList();
-                              } else {
-                                UpdateManoThermoList();
+                              print("reached here");
+                              var backupbody;
+                              var backuplink;
+
+                              setState(() => isAlertSet = false);
+                              isDeviceConnected =
+                                  await InternetConnectionChecker()
+                                  .hasConnection;
+                              if (!isDeviceConnected) {
+                                print("offline");
+                                for (int i = 0; i < listdata.length; i++) {
+                                  String value = "0";
+                                  String temp = "0";
+                                  String idf = "0";
+                                  String fd = "0";
+                                  String coal = "0";
+                                  String aphvaluee = "0";
+                                  String aphtempp = "0";
+                                  if (ValueControllers[i].text != "") {
+                                    value = ValueControllers[i].text;
+                                  }
+                                  if (TempControllers[i].text != "") {
+                                    temp = TempControllers[i].text;
+                                  }
+                                  if (idfan.text != "") {
+                                    idf = idfan.text;
+                                  }
+                                  if (fdfan.text != "") {
+                                    fd = fdfan.text;
+                                  }
+                                  if (coalused.text != "") {
+                                    coal = coalused.text;
+                                  }
+                                  if (aphvalue.text != "") {
+                                    aphvaluee = aphvalue.text;
+                                  }
+                                  if (aphtemp.text != "") {
+                                    aphtempp = aphtemp.text;
+                                  }
+                                  Constants.showtoast(
+                                      "No internet, Saving data offline.");
+                                  // setState(() => isAlertSet = true);
+                                  if (IDControllers[i].text == "0") {
+                                    // print('add backup');
+                                    backupbody = <String, String>{
+                                      "date":
+                                      selectedDate.toString().split(" ")[0],
+                                      "machine_id":
+                                      listdata[i]["id"].toString(),
+                                      "id_fan": idf,
+                                      "fd_fan": fd,
+                                      "coal_used": coal,
+                                      "aph_value": aphvaluee,
+                                      "aph_temperature": aphtempp,
+                                      "value": value,
+                                      "temperature": temp,
+                                    };
+                                    backuplink =
+                                    "${Constants.weblink}ManoMeterThermopackReportUploadAdd";
+                                  } else {
+                                    // print('update backup');
+                                    backupbody = <String, String>{
+                                      '_method': "PUT",
+                                      "id_fan": idf,
+                                      "fd_fan": fd,
+                                      "coal_used": coal,
+                                      "aph_value": aphvaluee,
+                                      "aph_temperature": aphtempp,
+                                      "value": value,
+                                      "temperature": temp
+                                    };
+                                    backuplink =
+                                    "${Constants.weblink}ManoMeterThermopackReportUploadUpdate/${uploaddata[i]["id"].toString()}";
+                                  }
+                                  prefs.getString("backuplinklist");
+                                  if (prefs.getString("backuplinklist") ==
+                                      null) {
+                                    // print("called");
+                                    prefs.setString(
+                                        "backuplinklist",
+                                        jsonEncode([
+                                          {
+                                            "backuplink": backuplink,
+                                            "backupbody": backupbody
+                                          }
+                                        ]));
+                                  } else {
+                                    // print("adder");
+                                    String? data =
+                                    prefs.getString("backuplinklist");
+                                    List DecodeUser = jsonDecode(data!);
+                                    DecodeUser.add({
+                                      "backuplink": backuplink,
+                                      "backupbody": backupbody
+                                    });
+                                    prefs.setString("backuplinklist",
+                                        jsonEncode(DecodeUser));
+                                  }
+                                  print(json.decode(
+                                      prefs.getString("backuplinklist")!));
+                                }
+                              }
+    else {
+                                print("online");
+                                if (uploaddata.length == 0) {
+                                  AddManoThermoList();
+                                } else {
+                                  UpdateManoThermoList();
+                                }
                               }
                             }
                           },
@@ -1400,7 +1675,7 @@ class _UploadManoThermoState extends State<UploadManoThermo>
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(" Sumbit  ",
+                              Text(" Submit  ",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontFamily: Constants.popins,

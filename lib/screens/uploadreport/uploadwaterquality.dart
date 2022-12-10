@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +29,10 @@ class _UploadWaterQualityState extends State<UploadWaterQuality>
   late SharedPreferences prefs;
   String? tokenvalue;
 
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -48,7 +55,38 @@ class _UploadWaterQualityState extends State<UploadWaterQuality>
   void initState() {
     super.initState();
     FetchWaterList();
+    getconnectivity();
   }
+
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+
+  }
+
+
+  getconnectivity() => subscription = Connectivity()
+      .onConnectivityChanged
+      .listen((ConnectivityResult result) async {
+    isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    if (!isDeviceConnected && isAlertSet == false) {
+      Constants.showtoast("No internet Connection");
+      print("You are Offline!");
+      setState(() {
+        isAlertSet = true;
+      });
+    } else {
+      print("You are Online!");
+      tokenvalue = prefs.getString("token");
+      String? data = prefs.getString("backuplinklist");
+      Utils(context).backuptoserver(tokenvalue!, data!);
+      prefs.setString("backuplinklist", jsonEncode([]));
+      print("prefs.getString");
+      print(prefs.getString("backuplinklist"));
+    }
+  });
 
   void FetchWaterList() async {
     TDSControllers.clear();
@@ -381,14 +419,18 @@ class _UploadWaterQualityState extends State<UploadWaterQuality>
                       padding: const EdgeInsets.only(right: 15.0),
                       // width: 100,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Utils(context).startLoading();
-                          // if (uploaddata.length == 0) {
-                          //   AddUtilityList();
-                          // } else {
-                          //   UpdateUtilityList();
-                          // }
-                          AddUpdateWaterList();
+                        onPressed: () async {
+                          setState(() => isAlertSet = false);
+                          isDeviceConnected =
+                              await InternetConnectionChecker().hasConnection;
+                          if (!isDeviceConnected) {
+                            print("offline");
+                            Utils(context).Youareoffline(context);
+                          } else {
+                            print("online");
+                            AddUpdateWaterList();
+                          }
+
                         },
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -396,7 +438,7 @@ class _UploadWaterQualityState extends State<UploadWaterQuality>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(" Sumbit All    ",
+                            Text(" Submit All    ",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: Constants.popins,
@@ -482,15 +524,103 @@ class _UploadWaterQualityState extends State<UploadWaterQuality>
                                               right: 15.0),
                                           // width: 100,
                                           child: ElevatedButton(
-                                            onPressed: () {
+                                            onPressed: () async {
                                               // Utils(context).startLoading();
-                                              if (IDControllers[index].text ==
-                                                  "0") {
-                                                AddWaterList(index);
-                                              } else {
-                                                UpdateWaterList(index,
-                                                    IDControllers[index].text);
+                                              var backupbody;
+                                              var backuplink;
+                                              String tds = "0";
+                                              String ph = "0";
+                                              String hardness = "0";
+                                              if (TDSControllers[index].text != "") {
+                                                tds = TDSControllers[index].text;
                                               }
+                                              if (PHControllers[index].text != "") {
+                                                ph = PHControllers[index].text;
+                                              }
+                                              if (HardnessControllers[index].text != "") {
+                                                hardness = HardnessControllers[index].text;
+                                              }
+                                              setState(
+                                                      () => isAlertSet = false);
+                                              isDeviceConnected =
+                                                  await InternetConnectionChecker()
+                                                  .hasConnection;
+                                              if (!isDeviceConnected) {
+                                                // print("offline");
+                                                Constants.showtoast(
+                                                    "No internet, Saving data offline.");
+                                                // setState(
+                                                //         () => isAlertSet = true);
+                                                if (IDControllers[index].text ==
+                                                    "0") {
+                                                  // print('add backup');
+                                                  backupbody = <String, String>{
+                                                    "date": selectedDate.toString().split(" ")[0],
+                                                    "machine_name_id": listdata[index]["id"].toString(),
+                                                    "tds": tds,
+                                                    "ph": ph,
+                                                    "hardness": hardness
+                                                  };
+                                                  backuplink =
+                                                  "${Constants.weblink}GetWaterQualityReportUploadAdd";
+                                                } else {
+                                                  // print('update backup');
+                                                  backupbody = <String, String>{
+                                                    '_method': "PUT",
+                                                    "machine_name_id": listdata[index]["id"].toString(),
+                                                    "tds": tds,
+                                                    "ph": ph,
+                                                    "hardness": hardness
+                                                  };
+                                                  backuplink =
+                                                  "${Constants.weblink}GetWaterQualityReportUploadUpdated/${IDControllers[index].text}";
+                                                }
+                                                prefs.getString(
+                                                    "backuplinklist");
+                                                if (prefs.getString(
+                                                    "backuplinklist") ==
+                                                    null) {
+                                                  // print("called");
+                                                  prefs.setString(
+                                                      "backuplinklist",
+                                                      jsonEncode([
+                                                        {
+                                                          "backuplink":
+                                                          backuplink,
+                                                          "backupbody":
+                                                          backupbody
+                                                        }
+                                                      ]));
+                                                } else {
+                                                  // print("adder");
+                                                  String? data =
+                                                  prefs.getString(
+                                                      "backuplinklist");
+                                                  List DecodeUser =
+                                                  jsonDecode(data!);
+                                                  DecodeUser.add({
+                                                    "backuplink": backuplink,
+                                                    "backupbody": backupbody
+                                                  });
+                                                  prefs.setString(
+                                                      "backuplinklist",
+                                                      jsonEncode(DecodeUser));
+                                                }
+                                                print(json.decode(
+                                                    prefs.getString(
+                                                        "backuplinklist")!));
+                                              }
+                                              else {
+                                                print("online");
+                                                if (IDControllers[index].text ==
+                                                    "0") {
+                                                  AddWaterList(index);
+                                                } else {
+                                                  UpdateWaterList(index,
+                                                      IDControllers[index].text);
+                                                }
+                                              }
+
                                             },
                                             style: ButtonStyle(
                                                 backgroundColor:
@@ -501,7 +631,7 @@ class _UploadWaterQualityState extends State<UploadWaterQuality>
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
-                                                Text(" Sumbit  ",
+                                                Text(" Submit  ",
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontFamily:

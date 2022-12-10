@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +33,10 @@ class _UploadThermoPackState extends State<UploadThermoPack>
   late SharedPreferences prefs;
   String? tokenvalue;
 
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlertSet = false;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -51,7 +58,36 @@ class _UploadThermoPackState extends State<UploadThermoPack>
     super.initState();
     FetchUploadThermoList();
     FetchThermoMachineList();
+    getconnectivity();
   }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+
+  getconnectivity() => subscription = Connectivity()
+      .onConnectivityChanged
+      .listen((ConnectivityResult result) async {
+    isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    if (!isDeviceConnected && isAlertSet == false) {
+      Constants.showtoast("No internet Connection");
+      print("You are Offline!");
+      setState(() {
+        isAlertSet = true;
+      });
+    } else {
+      print("You are Online!");
+      tokenvalue = prefs.getString("token");
+      String? data = prefs.getString("backuplinklist");
+      Utils(context).backuptoserver(tokenvalue!, data!);
+      prefs.setString("backuplinklist", jsonEncode([]));
+      print("prefs.getString");
+      print(prefs.getString("backuplinklist"));
+    }
+  });
 
   void FetchUploadThermoList() async {
     print("1");
@@ -329,8 +365,8 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                           padding: const EdgeInsets.only(right: 15.0),
                           // width: 100,
                           child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
+                            onPressed: () async {
+                              // setState(() async {
                                 if (_key.currentState!.validate()) {
                                   _key.currentState!.save();
                                   if (islisting == false) {
@@ -355,18 +391,126 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                                       ),
                                     );
                                   } else {
-                                    Utils(context).startLoading();
-                                    if (data.length == 0) {
-                                      AddThermoList();
-                                    } else {
-                                      UpdateThermoList();
+                                    var backupbody;
+                                    var backuplink;
+                                    setState(
+                                            () => isAlertSet = false);
+                                    isDeviceConnected =
+                                        await InternetConnectionChecker()
+                                        .hasConnection;
+                                    if (!isDeviceConnected) {
+                                      String chamberss = "0";
+                                      String coalone = "0";
+                                      String coaltwo = "0";
+                                      String intemperature = "0";
+                                      String outtemperature = "0";
+                                      String pump = "0";
+                                      String circuit = "0";
+                                      if (chambers.text != "") {
+                                        chamberss = chambers.text;
+                                      }
+                                      if (coal1.text != "") {
+                                        coalone = coal1.text;
+                                      }
+                                      if (coal2.text != "") {
+                                        coaltwo = coal2.text;
+                                      }
+                                      if (intemp.text != "") {
+                                        intemperature = intemp.text;
+                                      }
+                                      if (outtemp.text != "") {
+                                        outtemperature = outtemp.text;
+                                      }
+                                      if (pumppressure.text != "") {
+                                        pump = pumppressure.text;
+                                      }
+                                      if (circuitpressure.text != "") {
+                                        circuit = circuitpressure.text;
+                                      }
+                                      // print("offline");
+                                      Constants.showtoast(
+                                          "No internet, Saving data offline.");
+                                      // setState(
+                                      //         () => isAlertSet = true);
+                                      if (data.length == 0) {
+                                        // print('add backup');
+                                        backupbody = <String, String>{
+                                          "date": selectedDate.toString().split(" ")[0],
+                                          "chamber": chamberss,
+                                          "coal_1": coalone,
+                                          "coal_2": coaltwo,
+                                          "in_temperature": intemperature,
+                                          "out_temperature": outtemperature,
+                                          "pump_presure": pump,
+                                          "circuit_presure": circuit,
+                                          "thermopack_id": "1",
+                                        };
+                                        backuplink =
+                                        "${Constants.weblink}GetThermopackReportUploadAdd";
+                                      } else {
+                                        // print('update backup');
+                                        backupbody = <String, String>{
+                                          '_method': "PUT",
+                                          "chamber": chamberss,
+                                          "coal_1": coalone,
+                                          "coal_2": coaltwo,
+                                          "in_temperature": intemperature,
+                                          "out_temperature": outtemperature,
+                                          "pump_presure": pump,
+                                          "circuit_presure": circuit
+                                        };
+                                        backuplink =
+                                        "${Constants.weblink}GetThermopackReportUploadUpdated/${data[0]['id'].toString()}";
+                                      }
+                                      prefs.getString(
+                                          "backuplinklist");
+                                      if (prefs.getString(
+                                          "backuplinklist") ==
+                                          null) {
+                                        // print("called");
+                                        prefs.setString(
+                                            "backuplinklist",
+                                            jsonEncode([
+                                              {
+                                                "backuplink":
+                                                backuplink,
+                                                "backupbody":
+                                                backupbody
+                                              }
+                                            ]));
+                                      } else {
+                                        // print("adder");
+                                        String? data =
+                                        prefs.getString(
+                                            "backuplinklist");
+                                        List DecodeUser =
+                                        jsonDecode(data!);
+                                        DecodeUser.add({
+                                          "backuplink": backuplink,
+                                          "backupbody": backupbody
+                                        });
+                                        prefs.setString(
+                                            "backuplinklist",
+                                            jsonEncode(DecodeUser));
+                                      }
+                                      print(json.decode(
+                                          prefs.getString(
+                                              "backuplinklist")!));
+                                    }
+                                    else {
+                                      Utils(context).startLoading();
+                                      if (data.length == 0) {
+                                        AddThermoList();
+                                      } else {
+                                        UpdateThermoList();
+                                      }
                                     }
                                   }
                                 } else {
                                   Constants.showtoast(
                                       "please fill all the fields");
                                 }
-                              });
+                              // });
                             },
                             style: ButtonStyle(
                                 backgroundColor:
@@ -375,7 +519,7 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(" Sumbit  ",
+                                Text(" Submit  ",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontFamily: Constants.popins,
