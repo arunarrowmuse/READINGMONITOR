@@ -716,7 +716,7 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
                                                     width: w * 0.25,
                                                     child: TextFormField(
                                                       keyboardType:
-                                                          TextInputType.number,
+                                                          TextInputType.numberWithOptions(decimal: true),
                                                       controller:
                                                           ValueControllers[
                                                               index],
@@ -802,7 +802,7 @@ class _UploadFlueSteamState extends State<UploadFlueSteam>
                                                     width: w * 0.25,
                                                     child: TextFormField(
                                                       keyboardType:
-                                                          TextInputType.number,
+                                                          TextInputType.numberWithOptions(decimal: true),
                                                       controller:
                                                           TempControllers[
                                                               index],
@@ -1534,7 +1534,7 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
                                                     width: w * 0.25,
                                                     child: TextFormField(
                                                       keyboardType:
-                                                          TextInputType.number,
+                                                          TextInputType.numberWithOptions(decimal: true),
                                                       controller:
                                                           ValueControllers[
                                                               index],
@@ -1620,7 +1620,7 @@ class _UploadFlueThermoState extends State<UploadFlueThermo>
                                                     width: w * 0.25,
                                                     child: TextFormField(
                                                       keyboardType:
-                                                          TextInputType.number,
+                                                          TextInputType.numberWithOptions(decimal: true),
                                                       controller:
                                                           TempControllers[
                                                               index],

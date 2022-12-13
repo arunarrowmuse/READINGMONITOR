@@ -578,7 +578,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                           // width: w * 0.25,
                           child: TextFormField(
                             controller: avg,
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty)
                                 return 'Average is required.';
@@ -626,7 +626,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                           height: 60,
                           child: TextFormField(
                             controller: dev,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty)
                                 return 'Unit is required.';
@@ -672,7 +672,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                           height: 60,
                           child: TextFormField(
                             controller: mf,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty)
                                 return 'Unit is required.';
@@ -847,7 +847,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                           // width: w * 0.25,
                           child: TextFormField(
                             controller: avg,
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty)
                                 return 'Average is required.';
@@ -894,7 +894,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                         SizedBox(
                           height: 60,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             controller: dev,
                             validator: (value) {
                               if (value == null || value.isEmpty)
@@ -941,7 +941,7 @@ class _UtilityDetailState extends State<UtilityDetail> {
                           height: 60,
                           child: TextFormField(
                             controller: mf,
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty)
                                 return 'Unit is required.';

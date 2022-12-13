@@ -627,7 +627,7 @@ class _UploadSupplyPumpState extends State<UploadSupplyPump>
                                                   width: w * 0.25,
                                                   child: TextFormField(
                                                     keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType.numberWithOptions(decimal: true),
                                                     controller:
                                                         FlowControllers[index],
                                                     style: TextStyle(
@@ -708,7 +708,7 @@ class _UploadSupplyPumpState extends State<UploadSupplyPump>
                                                   width: w * 0.25,
                                                   child: TextFormField(
                                                     keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType.numberWithOptions(decimal: true),
                                                     controller:
                                                         UnitControllers[index],
                                                     style: TextStyle(

@@ -598,7 +598,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -647,7 +647,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -701,7 +701,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -750,7 +750,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -804,7 +804,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -853,7 +853,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -1034,7 +1034,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -1083,7 +1083,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -1137,7 +1137,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -1186,7 +1186,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -1240,7 +1240,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';
@@ -1289,7 +1289,7 @@ class _WaterQualityListState extends State<WaterQualityList> with AutomaticKeepA
                           height: 60,
                           width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Unit is required.';

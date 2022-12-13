@@ -564,7 +564,7 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: chambers,
                                     style: TextStyle(
                                       fontFamily: Constants.popins,
@@ -619,7 +619,7 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: coal1,
                                     style: TextStyle(
                                       fontFamily: Constants.popins,
@@ -674,7 +674,7 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: coal2,
                                     style: TextStyle(
                                       fontFamily: Constants.popins,
@@ -729,7 +729,7 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: intemp,
                                     style: TextStyle(
                                       fontFamily: Constants.popins,
@@ -784,7 +784,7 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: outtemp,
                                     style: TextStyle(
                                       fontFamily: Constants.popins,
@@ -839,7 +839,7 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: pumppressure,
                                     style: TextStyle(
                                       fontFamily: Constants.popins,
@@ -894,7 +894,7 @@ class _UploadThermoPackState extends State<UploadThermoPack>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: circuitpressure,
                                     style: TextStyle(
                                       fontFamily: Constants.popins,

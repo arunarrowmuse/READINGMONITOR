@@ -732,7 +732,7 @@ class _UploadMachinesState extends State<UploadMachines>
                                               width: w * 0.25,
                                               child: TextFormField(
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                    TextInputType.numberWithOptions(decimal: true),
                                                 controller:
                                                     EMControllers[index],
                                                 style: TextStyle(
@@ -802,7 +802,7 @@ class _UploadMachinesState extends State<UploadMachines>
                                               width: w * 0.25,
                                               child: TextFormField(
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                    TextInputType.numberWithOptions(decimal: true),
                                                 controller:
                                                     WaterControllers[index],
                                                 style: TextStyle(
@@ -880,7 +880,7 @@ class _UploadMachinesState extends State<UploadMachines>
                                               width: w * 0.25,
                                               child: TextFormField(
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                    TextInputType.numberWithOptions(decimal: true),
                                                 controller:
                                                     HMControllers[index],
                                                 style: TextStyle(
@@ -949,7 +949,7 @@ class _UploadMachinesState extends State<UploadMachines>
                                               width: w * 0.25,
                                               child: TextFormField(
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                    TextInputType.numberWithOptions(decimal: true),
                                                 controller:
                                                     BatchControllers[index],
                                                 style: TextStyle(

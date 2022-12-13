@@ -818,7 +818,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    // keyboardType: TextInputType.number,
+                                    // keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: name,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -877,7 +877,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _kwh,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -938,7 +938,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_kwh,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -999,7 +999,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _kvarh,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1060,7 +1060,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_kvarh,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1121,7 +1121,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _kvah,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1182,7 +1182,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_kvah,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1243,7 +1243,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _pf,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1304,7 +1304,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_pf,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1365,7 +1365,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _md,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1426,7 +1426,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_md,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1487,7 +1487,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _tb,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1548,7 +1548,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_tb,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1609,7 +1609,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _mf,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1762,7 +1762,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    // keyboardType: TextInputType.number,
+                                    // keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: name,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1821,7 +1821,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _kwh,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1882,7 +1882,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_kwh,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -1943,7 +1943,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _kvarh,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2004,7 +2004,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_kvarh,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2065,7 +2065,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     controller: _kvah,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2126,7 +2126,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_kvah,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2187,7 +2187,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:TextInputType.numberWithOptions(decimal: true),
                                     controller: _pf,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2248,7 +2248,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_pf,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2309,7 +2309,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:TextInputType.numberWithOptions(decimal: true),
                                     controller: _md,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2370,7 +2370,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_md,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2431,7 +2431,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:TextInputType.numberWithOptions(decimal: true),
                                     controller: _tb,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2492,7 +2492,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:TextInputType.numberWithOptions(decimal: true),
                                     controller: _dev_tb,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)
@@ -2553,7 +2553,7 @@ class _GEBListState extends State<GEBList>
                                 width: w * 0.3,
                                 child: Center(
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType:TextInputType.numberWithOptions(decimal: true),
                                     controller: _mf,
                                     validator: (value) {
                                       if (value == null || value.isEmpty)

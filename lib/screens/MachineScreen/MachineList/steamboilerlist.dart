@@ -219,7 +219,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: bfw,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -273,7 +273,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: bfwpr,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -327,7 +327,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: temp,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -381,7 +381,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: bfwtemppr,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -435,7 +435,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: ro_water,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -489,7 +489,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: ro_water_per,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -543,7 +543,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: coal1,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -597,7 +597,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: coal1dv,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -651,7 +651,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: ratecoal1,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -705,7 +705,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: coal2,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -759,7 +759,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: coal2dv,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -813,7 +813,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: ratecoal2,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -867,7 +867,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: steamcost,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -921,7 +921,7 @@ class _SteamBoilerListState extends State<SteamBoilerList> with AutomaticKeepAli
                             height: 50,
                             width: w * 0.4,
                           child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: steamcostpr,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';

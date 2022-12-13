@@ -609,7 +609,7 @@ class _UploadManoSteamState extends State<UploadManoSteam>
                             height: 35,
                             width: w * 0.15,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: idfan,
                               style: TextStyle(
                                 fontFamily: Constants.popins,
@@ -661,7 +661,7 @@ class _UploadManoSteamState extends State<UploadManoSteam>
                             height: 35,
                             width: w * 0.15,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: fdfan,
                               style: TextStyle(
                                 fontFamily: Constants.popins,
@@ -725,7 +725,7 @@ class _UploadManoSteamState extends State<UploadManoSteam>
                             height: 35,
                             width: w * 0.15,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: coalused,
                               style: TextStyle(
                                 fontFamily: Constants.popins,
@@ -821,7 +821,7 @@ class _UploadManoSteamState extends State<UploadManoSteam>
                                     height: 35,
                                     width: w * 0.25,
                                     child: TextFormField(
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                                       controller: aphvalue,
                                       style: TextStyle(
                                         fontFamily: Constants.popins,
@@ -877,7 +877,7 @@ class _UploadManoSteamState extends State<UploadManoSteam>
                                     height: 35,
                                     width: w * 0.25,
                                     child: TextFormField(
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                                       controller: aphtemp,
                                       style: TextStyle(
                                         fontFamily: Constants.popins,
@@ -1015,7 +1015,7 @@ class _UploadManoSteamState extends State<UploadManoSteam>
                                                     width: w * 0.25,
                                                     child: TextFormField(
                                                       keyboardType:
-                                                          TextInputType.number,
+                                                          TextInputType.numberWithOptions(decimal: true),
                                                       controller:
                                                           ValueControllers[
                                                               index],
@@ -1101,7 +1101,7 @@ class _UploadManoSteamState extends State<UploadManoSteam>
                                                     width: w * 0.25,
                                                     child: TextFormField(
                                                       keyboardType:
-                                                          TextInputType.number,
+                                                          TextInputType.numberWithOptions(decimal: true),
                                                       controller:
                                                           TempControllers[
                                                               index],
@@ -1710,7 +1710,7 @@ class _UploadManoThermoState extends State<UploadManoThermo>
                             height: 35,
                             width: w * 0.15,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: idfan,
                               style: TextStyle(
                                 fontFamily: Constants.popins,
@@ -1762,7 +1762,7 @@ class _UploadManoThermoState extends State<UploadManoThermo>
                             height: 35,
                             width: w * 0.15,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: fdfan,
                               style: TextStyle(
                                 fontFamily: Constants.popins,
@@ -1826,7 +1826,7 @@ class _UploadManoThermoState extends State<UploadManoThermo>
                             height: 35,
                             width: w * 0.15,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: coalused,
                               style: TextStyle(
                                 fontFamily: Constants.popins,
@@ -1922,7 +1922,7 @@ class _UploadManoThermoState extends State<UploadManoThermo>
                                     height: 35,
                                     width: w * 0.25,
                                     child: TextFormField(
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                                       controller: aphvalue,
                                       style: TextStyle(
                                         fontFamily: Constants.popins,
@@ -1978,7 +1978,7 @@ class _UploadManoThermoState extends State<UploadManoThermo>
                                     height: 35,
                                     width: w * 0.25,
                                     child: TextFormField(
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.numberWithOptions(decimal: true),
                                       controller: aphtemp,
                                       style: TextStyle(
                                         fontFamily: Constants.popins,
@@ -2116,7 +2116,7 @@ class _UploadManoThermoState extends State<UploadManoThermo>
                                                     width: w * 0.25,
                                                     child: TextFormField(
                                                       keyboardType:
-                                                          TextInputType.number,
+                                                          TextInputType.numberWithOptions(decimal: true),
                                                       controller:
                                                           ValueControllers[
                                                               index],
@@ -2202,7 +2202,7 @@ class _UploadManoThermoState extends State<UploadManoThermo>
                                                     width: w * 0.25,
                                                     child: TextFormField(
                                                       keyboardType:
-                                                          TextInputType.number,
+                                                          TextInputType.numberWithOptions(decimal: true),
                                                       controller:
                                                           TempControllers[
                                                               index],

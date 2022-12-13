@@ -669,7 +669,7 @@ class _UploadUtilityState extends State<UploadUtility>
                                                 controller:
                                                     EMControllers[index],
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                    TextInputType.numberWithOptions(decimal: true),
                                                 style: TextStyle(
                                                     fontFamily:
                                                         Constants.popins,
@@ -739,7 +739,7 @@ class _UploadUtilityState extends State<UploadUtility>
                                                 controller:
                                                     HMControllers[index],
                                                 keyboardType:
-                                                    TextInputType.number,
+                                                    TextInputType.numberWithOptions(decimal: true),
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontFamily: Constants.popins,

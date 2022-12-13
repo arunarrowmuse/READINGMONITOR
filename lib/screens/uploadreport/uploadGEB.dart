@@ -742,7 +742,7 @@ class _UploadGEBState extends State<UploadGEB>
                                         width: w * 0.25,
                                         child: TextFormField(
                                           keyboardType:
-                                          TextInputType.number,
+                                          TextInputType.numberWithOptions(decimal: true),
                                           controller: KWHControllers[index],
                                           // FlowControllers[index],
                                           style: TextStyle(
@@ -823,7 +823,7 @@ class _UploadGEBState extends State<UploadGEB>
                                         width: w * 0.25,
                                         child: TextFormField(
                                           keyboardType:
-                                          TextInputType.number,
+                                          TextInputType.numberWithOptions(decimal: true),
                                           controller: KVARHControllers[index],
                                           // UnitControllers[index],
                                           style: TextStyle(
@@ -904,7 +904,7 @@ class _UploadGEBState extends State<UploadGEB>
                                         width: w * 0.25,
                                         child: TextFormField(
                                           keyboardType:
-                                          TextInputType.number,
+                                          TextInputType.numberWithOptions(decimal: true),
                                           controller: KVAHControllers[index],
                                           // controller:
                                           // UnitControllers[index],
@@ -986,7 +986,7 @@ class _UploadGEBState extends State<UploadGEB>
                                         width: w * 0.25,
                                         child: TextFormField(
                                           keyboardType:
-                                          TextInputType.number,
+                                          TextInputType.numberWithOptions(decimal: true),
                                           controller: MDControllers[index],
                                           // UnitControllers[index],
                                           style: TextStyle(
@@ -1067,7 +1067,7 @@ class _UploadGEBState extends State<UploadGEB>
                                         width: w * 0.25,
                                         child: TextFormField(
                                           keyboardType:
-                                          TextInputType.number,
+                                          TextInputType.numberWithOptions(decimal: true),
                                           controller: TURBINEControllers[index],
                                           // UnitControllers[index],
                                           style: TextStyle(

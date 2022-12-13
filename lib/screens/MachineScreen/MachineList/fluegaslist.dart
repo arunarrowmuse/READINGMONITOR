@@ -647,7 +647,7 @@ class _FlueSteamBoilerState extends State<FlueSteamBoiler>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Value is required.';
@@ -696,7 +696,7 @@ class _FlueSteamBoilerState extends State<FlueSteamBoiler>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Value % is required.';
@@ -751,7 +751,7 @@ class _FlueSteamBoilerState extends State<FlueSteamBoiler>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Temperature is required.';
@@ -800,7 +800,7 @@ class _FlueSteamBoilerState extends State<FlueSteamBoiler>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Temperature % is required.';
@@ -987,7 +987,7 @@ class _FlueSteamBoilerState extends State<FlueSteamBoiler>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Value is required.';
@@ -1036,7 +1036,7 @@ class _FlueSteamBoilerState extends State<FlueSteamBoiler>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Value % is required.';
@@ -1091,7 +1091,7 @@ class _FlueSteamBoilerState extends State<FlueSteamBoiler>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Temperature is required.';
@@ -1140,7 +1140,7 @@ class _FlueSteamBoilerState extends State<FlueSteamBoiler>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Temperature % is required.';
@@ -1898,7 +1898,7 @@ class _FlueThermoPackState extends State<FlueThermoPack>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Value is required.';
@@ -1947,7 +1947,7 @@ class _FlueThermoPackState extends State<FlueThermoPack>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Value % is required.';
@@ -2002,7 +2002,7 @@ class _FlueThermoPackState extends State<FlueThermoPack>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Temperature is required.';
@@ -2051,7 +2051,7 @@ class _FlueThermoPackState extends State<FlueThermoPack>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Temperature % is required.';
@@ -2239,7 +2239,7 @@ class _FlueThermoPackState extends State<FlueThermoPack>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Value is required.';
@@ -2288,7 +2288,7 @@ class _FlueThermoPackState extends State<FlueThermoPack>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Value % is required.';
@@ -2343,7 +2343,7 @@ class _FlueThermoPackState extends State<FlueThermoPack>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Temperature is required.';
@@ -2392,7 +2392,7 @@ class _FlueThermoPackState extends State<FlueThermoPack>
                             height: 60,
                             width: w * 0.25,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               validator: (value) {
                                 if (value == null || value.isEmpty)
                                   return 'Temperature % is required.';

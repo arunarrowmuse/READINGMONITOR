@@ -420,7 +420,7 @@ class _SupplyPumpListState extends State<SupplyPumpList>
                           // width: w * 0.25,
                           child: TextFormField(
                             controller: average,
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty)
                                 return 'Average is required.';
@@ -468,7 +468,7 @@ class _SupplyPumpListState extends State<SupplyPumpList>
                           height: 60,
                           child: TextFormField(
                             controller: deviation,
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty)
                                 return 'Unit is required.';
@@ -642,7 +642,7 @@ class _SupplyPumpListState extends State<SupplyPumpList>
                           height: 60,
                           // width: w * 0.25,
                           child: TextFormField(
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             controller: average,
                             validator: (value) {
                               if (value == null || value.isEmpty)
@@ -690,7 +690,7 @@ class _SupplyPumpListState extends State<SupplyPumpList>
                           height: 60,
                           child: TextFormField(
                             controller: deviation,
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             validator: (value) {
                               if (value == null || value.isEmpty)
                                 return 'Unit is required.';

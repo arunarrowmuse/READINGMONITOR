@@ -200,7 +200,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _coal1,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -256,7 +256,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _coal1dv,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -312,7 +312,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _ratecoal1,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -368,7 +368,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _coal2,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -424,7 +424,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _coal2dv,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -480,7 +480,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _ratecoal2,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -536,7 +536,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _deltaT,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -592,7 +592,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _deltaTdv,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -648,7 +648,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _chamber,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';
@@ -704,7 +704,7 @@ class _ThermoPackListState extends State<ThermoPackList> with AutomaticKeepAlive
                             height: 45,
                             width: w * 0.4,
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.numberWithOptions(decimal: true),
                               controller: _chamberdv,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return '';

@@ -518,7 +518,7 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     // validator: (value) {
                                     //   if (value == null || value.isEmpty) {
                                     //     return 'BFW is required.';
@@ -579,7 +579,7 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     // validator: (value) {
                                     //   if (value == null || value.isEmpty) {
                                     //     return 'value is required.';
@@ -640,7 +640,7 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     // validator: (value) {
                                     //   if (value == null || value.isEmpty) {
                                     //     return 'value is required.';
@@ -701,7 +701,7 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     // validator: (value) {
                                     //   if (value == null || value.isEmpty) {
                                     //     return 'value is required.';
@@ -762,7 +762,7 @@ class _UploadSteamBoilerState extends State<UploadSteamBoiler>
                                   height: 35,
                                   width: w * 0.4,
                                   child: TextFormField(
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     // validator: (value) {
                                     //   if (value == null || value.isEmpty) {
                                     //     return 'temp is required.';

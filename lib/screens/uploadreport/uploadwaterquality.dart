@@ -677,7 +677,7 @@ class _UploadWaterQualityState extends State<UploadWaterQuality>
                                                   width: w * 0.15,
                                                   child: TextFormField(
                                                     keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType.numberWithOptions(decimal: true),
                                                     controller:
                                                         TDSControllers[index],
                                                     style: TextStyle(
@@ -758,7 +758,7 @@ class _UploadWaterQualityState extends State<UploadWaterQuality>
                                                   width: w * 0.15,
                                                   child: TextFormField(
                                                     keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType.numberWithOptions(decimal: true),
                                                     controller:
                                                         PHControllers[index],
                                                     style: TextStyle(
@@ -839,7 +839,7 @@ class _UploadWaterQualityState extends State<UploadWaterQuality>
                                                   width: w * 0.15,
                                                   child: TextFormField(
                                                     keyboardType:
-                                                        TextInputType.number,
+                                                        TextInputType.numberWithOptions(decimal: true),
                                                     controller:
                                                         HardnessControllers[
                                                             index],

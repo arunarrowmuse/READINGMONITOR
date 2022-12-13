@@ -587,7 +587,7 @@ class _UploadMiscState extends State<UploadMisc>
                                           height: 35,
                                           width: w * 0.35,
                                           child: TextFormField(
-                                            keyboardType: TextInputType.number,
+                                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                                             controller: ValueControllers[index],
                                             style: TextStyle(
                                               fontFamily: Constants.popins,
@@ -849,7 +849,7 @@ class _UploadMiscState extends State<UploadMisc>
                                           height: 35,
                                           width: w * 0.35,
                                           child: TextFormField(
-                                            keyboardType: TextInputType.number,
+                                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                                             controller: ValueControllers[index],
                                             style: TextStyle(
                                               fontFamily: Constants.popins,
